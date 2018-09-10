@@ -1,0 +1,36 @@
+AI Concept
+
+
+[Key]
+
+Action Archetype (AATYPE): The top-level archetypes for actions in Nowhere, those being ATTACK, GUARD, BARRIER, BUFF, TRANSFORM, and WAIT. Each can be further broken down (e.g. ATTACK SPELL).
+
+Most Rewarding Option (MRO): The option which the agent calculates to grant the greatest return. This option can be a punishing action depending on the matchup, but is not necessarily related to the opponent's predicted actions.
+
+Same Type Attack Bonus (STAB): A damage multiplier that is applied to moves which share the type of the user.
+
+
+[Components]
+
+Difficulty: The agent will not change its decision-making process with respect to difficulty, but instead the information available to it is slightly different. A **normal** difficulty agent has the same information as a player in that it cannot immediately determine the base stats and typing of opponents, and instead must make some assumptions until more information is acquired. The **hard** version can see all of the things previously discussed, including stats and typing. The **tailored** version additionally knows what moves and form-changes the opponent has available.
+
+Opening Move: The agent's opening move is heavily dependent on the difficulty setting. Since the hard version knows the opponent's typing and stats, it can predict the kind of attacks the opponent would be likely to run and attempt to choose the most rewarding option (such as creating obstacles for an opponent who can only deal significant damage using physical attacks, changing to an type that is immune to most of the opponent's attacks, or applying a damage over time effect to an opponent that the agent is unlikely to be able to damage normally). The tailored version, for instance, with its knowledge of the opponent's moveset, is more likely to make an aggressive play when the opponent matches up poorly.
+
+Subsequent Moves: The agent is to access the recorded match information to predict what action archetype the opponent is most likely to do, given the opponent's prior actions, the abilities that the opponent has shown, and the abilities that the opponent could potentially have (assuming that the agent does not know). If the agent is in a dominant position, it will use a generally risk-averse strategy characterized by low-drawback actions, except when it predicts the opponent to make a punishable action at a high probability. If the agent is not far behind the opponent, it is to choose the option which punishes the greatest cumulative probability of similar options from the set of predicted moves that the opponent could make for that turn. If the agent is behind, it may attempt to punish the actions which represent the greatest risk of immediate defeat, or take actions which give it reasonable odds of severely weakening the opponent.
+
+Punishing: During a punishing action, the agent is to make use of the skill flags on moves (along with manually categorized abilities) to determine if it can neutralize the opponent's action while also dealing damage or gaining an advantageous state, such as by reflecting a damaging spell or taking the opportunity to bolster itself on a turn where the opponent defends.
+
+Risk Avoidance: If the agent is not in a critical situation and also does not have enough information about the opponent to make actionable predictions, it is to make use of moves with low potential to punished by the opponent.
+
+
+[Strategy Types]
+
+Offensive: The offensive type agent attempts to hit opponents hard with strong attacks that deal at least neutral damage. They generally have at least two attacking moves with STAB, and high offensive stats. They often carry a move which boosts their offensive ability in some way.
+
+Balanced: The balanced type agent attempts to hit most opponents super-effectively while with only modest investment in offensive stats. They are likely to possess attacking skills from several different types, and some utility skills selected to handle the build's poor matchups (e.g. status cleansing, counter moves).
+
+Punisher: The punisher type agent attempts to predict and outplay each of the opponent's actions, and relies more on the accuracy of its predictions than the other types. To that end, punisher type agents generally have an assortment of context-specific actions so that they can counter a variety of AATYPEs.
+
+Stall: The stall type agent attempts to deal passive, recurring damage while minimizing damage to itself and regenerating. They generally have at least 2 ways to inflict passive damage on opponents, and strong defensive stats and abilities. They often have a way to rid themselves of status effects.
+
+h4x0r: The HAX type agent attempts to make the game less fun for human players. They generally have a variety of status effects and debuffs to abuse chance.
