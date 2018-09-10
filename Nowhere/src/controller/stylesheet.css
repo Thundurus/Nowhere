@@ -1,0 +1,112 @@
+.button{
+	-fx-background-radius: 10;
+	-fx-background-color: #232323,
+							linear-gradient(#A1A1A1, #949494),
+							linear-gradient(#393939, #686868 10%, #786f71 25%, #242424 100%),
+							linear-gradient(#777777 0%, #606060 50%, #505250 51%, #2a2b2a 100%);
+	-fx-background-insets: 2;
+	-fx-border-radius: 10;
+	-fx-border-color: A1A1A1;
+	-fx-border-width: 1;
+}
+.button:hover{
+	-fx-background-color: #393939,
+							linear-gradient(#A1A1A1, #949494),
+							linear-gradient(#393939, #686868 10%, #786f71 25%, #393939 100%);
+    -fx-background-insets: 0;
+	/*-fx-border-radius: 0;
+	-fx-border-color: null;*/
+	-fx-cursor: hand;
+}
+
+.label{
+	-fx-text-fill: #FFFFFF;
+	-fx-effect: dropshadow( one-pass-box , #222222 , 5, 0.0 , 1 , 1 );
+	-fx-font-size: 16;
+	-fx-font-family: "Century Gothic";
+}
+
+.label .text{
+	/*-fx-font-family: "Helvetica";*/
+	/*
+	-fx-stroke: #A1A1A1;
+	-fx-stroke-width: 1px;
+	*/
+}
+
+#location{
+	-fx-text-fill: #FFFFFF;
+	-fx-effect: dropshadow( one-pass-box , #222222 , 5, 0.0 , 1 , 1 );
+	-fx-font-size: 38;
+	-fx-font-family: "Century Gothic";
+}
+
+.stackpane {
+	-fx-background-color: #2C2C2C;
+	-fx-background-radius: 10;
+}
+
+.text-area, .text-area .viewport, .text-area .content, .text-area .text {
+	-fx-background: transparent;
+	-fx-background-color: transparent;
+}
+
+.text-area{
+	-fx-text-fill: #A1A1A1;
+	-fx-effect: dropshadow( one-pass-box , #555555 , 0, 0.0 , 1 , 0 );
+}
+
+.text {
+	-fx-text-origin: top;
+	-fx-text-alignment: right;
+	-fx-text-fill: #A1A1A1;
+	-fx-effect: dropshadow( one-pass-box , #555555 , 0, 0.0 , 1 , 0 );
+}
+
+.scroll-bar{
+	-fx-background: transparent;
+	-fx-background-color: transparent;
+}
+
+.thumb{
+	-fx-background-color: #212121;
+}
+
+.increment-button:hover, .decrement-button:hover{
+	-fx-background-color: transparent;
+}
+
+/*
+.tooltip {
+	-fx-background-radius: 10;
+	-fx-background-insets: 2;
+	-fx-border-radius: 10;
+	-fx-border-color: A1A1A1;
+	-fx-border-width: 1;
+	-fx-wrap-text: true;
+	-fx-font-size: 14;
+	-fx-font-family: "Century Gothic";
+}
+*/
+
+.tooltip {
+	-fx-font-size: 14;
+}
+
+#regular {
+	-fx-fill: #FFFFFF;
+	-fx-font-size: 16;
+	-fx-font-family: "Century Gothic";
+}
+
+#damage {
+	-fx-fill: #CA002E;
+	-fx-font-size: 16;
+	-fx-font-family: "Century Gothic";
+}
+
+#debug {
+	-fx-fill: #55FF55;
+	-fx-font-size: 16;
+	-fx-font-family: "Century Gothic";
+}

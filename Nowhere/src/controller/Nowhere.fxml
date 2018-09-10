@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.TextFlow?>
+
+<AnchorPane fx:id="root" prefHeight="700.0" prefWidth="1240.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GUIHook">
+   <children>
+      <HBox alignment="CENTER" style="-fx-background-color: #2C2C2C;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox alignment="BASELINE_CENTER" fillWidth="false" maxHeight="1.7976931348623157E308" minWidth="250.0" prefHeight="700.0" prefWidth="250.0" HBox.hgrow="NEVER">
+               <children>
+                  <AnchorPane fx:id="ap1" maxWidth="240.0" minHeight="70.0" minWidth="240.0" prefHeight="70.0" prefWidth="240.0" style="-fx-background-color: #252525; -fx-background-radius: 20;" VBox.vgrow="NEVER" />
+                  <Region layoutX="10.0" layoutY="355.0" maxHeight="1.7976931348623157E308" minHeight="5.0" minWidth="250.0" prefHeight="1000.0" prefWidth="250.0" />
+                  <AnchorPane fx:id="ap2" minHeight="370.0" minWidth="240.0" prefHeight="370.0" prefWidth="240.0" style="-fx-background-color: #252525; -fx-background-radius: 20;">
+                     <children>
+                        <VBox prefHeight="305.0" prefWidth="240.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane minHeight="120.0" prefHeight="200.0" prefWidth="200.0" />
+                              <Region layoutX="15.0" layoutY="225.0" minHeight="5.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #2D2D2D;" />
+                              <HBox minHeight="30.0" prefHeight="30.0" prefWidth="230.0">
+                                 <children>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" layoutY="8.0" prefHeight="30.0" prefWidth="35.0" text="HP" textFill="#ca002e" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <StackPane alignment="CENTER_LEFT" minWidth="160.0" prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <Region disable="true" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #2C2C2C; -fx-background-radius: 5;" />
+                                          <Region layoutX="15.0" layoutY="15.0" maxWidth="150.0" prefHeight="200.0" prefWidth="150.0" style="-fx-background-color: #CA002E; -fx-background-radius: 5;" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </StackPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="35.0" text="420" textFill="#dadada" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </HBox>
+                              <HBox minHeight="30.0" prefHeight="30.0" prefWidth="230.0">
+                                 <children>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" layoutY="8.0" prefHeight="30.0" prefWidth="35.0" text="MP" textFill="#003295" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <StackPane alignment="CENTER_LEFT" minWidth="160.0" prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <Region disable="true" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #2C2C2C; -fx-background-radius: 5;" />
+                                          <Region layoutX="15.0" layoutY="15.0" maxWidth="150.0" prefHeight="200.0" prefWidth="150.0" style="-fx-background-color: #003295; -fx-background-radius: 5;" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </StackPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="35.0" text="420" textFill="#dadada" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </HBox>
+                              <HBox minHeight="30.0" prefHeight="30.0" prefWidth="230.0">
+                                 <children>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" layoutY="8.0" prefHeight="30.0" prefWidth="35.0" text="SP" textFill="#3d8a00" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <StackPane alignment="CENTER_LEFT" minWidth="160.0" prefHeight="150.0" prefWidth="200.0">
+                                       <children>
+                                          <Region disable="true" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #2C2C2C; -fx-background-radius: 5;" />
+                                          <Region layoutX="15.0" layoutY="15.0" maxWidth="150.0" prefHeight="200.0" prefWidth="150.0" style="-fx-background-color: #3D8A00; -fx-background-radius: 5;" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </padding>
+                                    </StackPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                       <children>
+                                          <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="35.0" text="420" textFill="#dadada" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </HBox>
+                              <Region minHeight="5.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #2D2D2D;" />
+                              <AnchorPane minHeight="120.0" prefHeight="200.0" prefWidth="200.0" />
+                           </children>
+                        </VBox>
+                     </children></AnchorPane>
+                  <Region maxHeight="1.7976931348623157E308" minHeight="5.0" minWidth="250.0" prefHeight="1000.0" prefWidth="250.0" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Region>
+                  <AnchorPane fx:id="ap3" layoutX="10.0" layoutY="10.0" minHeight="240.0" minWidth="240.0" prefHeight="305.0" prefWidth="240.0" style="-fx-background-color: #252525; -fx-background-radius: 20;">
+                     <children>
+                        <GridPane layoutX="20.0" layoutY="75.0" prefHeight="240.0" prefWidth="240.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <StackPane fx:id="mg11" prefHeight="150.0" prefWidth="200.0" />
+                              <StackPane fx:id="mg12" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" />
+                              <StackPane fx:id="mg13" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" />
+                              <StackPane fx:id="mg14" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="3" />
+                              <StackPane fx:id="mg15" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="4" />
+                              <StackPane fx:id="mg21" prefHeight="150.0" prefWidth="200.0" GridPane.rowIndex="1" />
+                              <StackPane fx:id="mg22" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <StackPane fx:id="mg23" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <StackPane fx:id="mg24" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                              <StackPane fx:id="mg25" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                              <StackPane fx:id="mg31" prefHeight="150.0" prefWidth="200.0" GridPane.rowIndex="2" />
+                              <StackPane fx:id="mg32" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <StackPane fx:id="mg33" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                              <StackPane fx:id="mg34" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                              <StackPane fx:id="mg35" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                              <StackPane fx:id="mg41" prefHeight="150.0" prefWidth="200.0" GridPane.rowIndex="3" />
+                              <StackPane fx:id="mg42" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <StackPane fx:id="mg43" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                              <StackPane fx:id="mg44" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                              <StackPane fx:id="mg45" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                              <StackPane fx:id="mg51" prefHeight="150.0" prefWidth="200.0" GridPane.rowIndex="4" />
+                              <StackPane fx:id="mg52" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <StackPane fx:id="mg53" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                              <StackPane fx:id="mg54" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                              <StackPane fx:id="mg55" prefHeight="150.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                           </children>
+                           <padding>
+                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                           </padding>
+                        </GridPane>
+                     </children></AnchorPane>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
+            <VBox layoutX="485.0" layoutY="20.0" maxHeight="1.7976931348623157E308" minWidth="0.0" prefHeight="700.0" prefWidth="620.0" spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <AnchorPane fx:id="ap7" maxWidth="1.7976931348623157E308" minHeight="70.0" prefHeight="70.0" style="-fx-background-color: #252525; -fx-background-radius: 20;" VBox.vgrow="NEVER">
+                     <children>
+                        <TextArea id="location" editable="false" mouseTransparent="true" prefHeight="70.0" prefWidth="740.0" text="Location - Nowhere" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children></AnchorPane>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="530.0" prefWidth="620.0" style="-fx-background: #2C2C2C; -fx-background-color: #2C2C2C;" VBox.vgrow="ALWAYS">
+                     <content>
+                        <TextFlow fx:id="mainText" prefHeight="200.0" prefWidth="200.0" />
+                     </content></ScrollPane>
+                  <HBox alignment="CENTER" maxHeight="150.0" minHeight="140.0" prefHeight="140.0" prefWidth="1300.0" style="-fx-background-color: #252525; -fx-background-radius: 20;">
+                     <children>
+                        <AnchorPane minWidth="45.0" prefHeight="200.0" prefWidth="45.0" HBox.hgrow="SOMETIMES">
+                           <children>
+                              <StackPane fx:id="left" alignment="BOTTOM_RIGHT" layoutX="13.0" prefHeight="150.0" prefWidth="45.0" styleClass="stackpane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false">
+                                       <graphic>
+                                          <Label text="&lt;" />
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </StackPane>
+                              <TextArea editable="false" layoutX="-93.0" layoutY="-67.0" mouseTransparent="true" prefHeight="147.0" prefWidth="45.0" text="Q" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                           <padding>
+                              <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+                           </padding></AnchorPane>
+                        <GridPane hgap="5.0" prefHeight="150.0" prefWidth="203.0" vgap="5.0" HBox.hgrow="ALWAYS">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <StackPane fx:id="r1c1" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane">
+                                 <children>
+                                    <Button alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" textAlignment="CENTER">
+                                       <cursor>
+                                          <Cursor fx:constant="DEFAULT" />
+                                       </cursor>
+                                       <graphic>
+                                          <Label text="Label" />
+                                       </graphic>
+                                    </Button>
+                                    <TextArea fx:id="r1c1_t" editable="false" mouseTransparent="true" prefHeight="48.0" prefWidth="123.0" text="1" StackPane.alignment="TOP_RIGHT" />
+                                 </children></StackPane>
+                              <StackPane fx:id="r1c2" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="1">
+                                 <children>
+                                    <TextArea fx:id="r1c2_t" editable="false" mouseTransparent="true" prefHeight="48.0" prefWidth="123.0" text="2" />
+                                 </children></StackPane>
+							  <StackPane fx:id="r1c3" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="2">
+                                 <children>
+                                    <TextArea fx:id="r1c3_t" editable="false" mouseTransparent="true" prefHeight="48.0" prefWidth="123.0" text="3" />
+                                 </children></StackPane>
+							  <StackPane fx:id="r1c4" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="3">
+                                 <children>
+                                    <TextArea fx:id="r1c4_t" editable="false" mouseTransparent="true" prefHeight="48.0" prefWidth="123.0" text="4" />
+                                 </children></StackPane>
+							  <StackPane fx:id="r1c5" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="4">
+                                 <children>
+                                    <TextArea fx:id="r1c5_t" editable="false" mouseTransparent="true" prefHeight="48.0" prefWidth="123.0" text="5" />
+                                 </children></StackPane>
+							  <StackPane fx:id="r2c1" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.rowIndex="1">
+                                 <children>
+                                    <TextArea fx:id="r2c1_t" editable="false" mouseTransparent="true" prefHeight="48.0" prefWidth="123.0" text="6" />
+                                 </children></StackPane>
+                              <StackPane fx:id="r2c2" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <children>
+                                    <TextArea fx:id="r2c2_t" editable="false" mouseTransparent="true" prefHeight="48.0" prefWidth="123.0" text="7" />
+                                 </children></StackPane>
+							  <StackPane fx:id="r2c3" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                 <children>
+                                    <TextArea fx:id="r2c3_t" editable="false" mouseTransparent="true" prefHeight="48.0" prefWidth="123.0" text="8" />
+                                 </children></StackPane>
+							  <StackPane fx:id="r2c4" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                 <children>
+                                    <TextArea fx:id="r2c4_t" editable="false" mouseTransparent="true" prefHeight="48.0" prefWidth="123.0" text="9" />
+                                 </children></StackPane>
+							  <StackPane fx:id="r2c5" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                                 <children>
+                                    <TextArea fx:id="r2c5_t" editable="false" mouseTransparent="true" prefHeight="48.0" prefWidth="123.0" text="0" />
+                                 </children></StackPane>
+							  <StackPane fx:id="r3c1" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.rowIndex="2" />
+							  <StackPane fx:id="r3c2" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+							  <StackPane fx:id="r3c3" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+							  <StackPane fx:id="r3c4" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+							  <StackPane fx:id="r3c5" prefHeight="150.0" prefWidth="200.0" styleClass="stackpane" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" top="10.0" />
+                           </padding>
+                        </GridPane>
+                        <AnchorPane minWidth="45.0" prefHeight="200.0" prefWidth="45.0" stylesheets="@stylesheet.css" HBox.hgrow="SOMETIMES">
+                           <children>
+                              <StackPane fx:id="right" alignment="BOTTOM_RIGHT" layoutX="-8.0" prefHeight="150.0" prefWidth="45.0" styleClass="stackpane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false">
+                                       <graphic>
+                                          <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="&gt;" />
+                                       </graphic>
+                                    </Button>
+                                    <TextArea editable="false" mouseTransparent="true" prefHeight="147.0" prefWidth="45.0" text="E" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="7.0" left="7.0" right="7.0" top="7.0" />
+                           </padding></AnchorPane>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding>
+            </VBox>
+            <VBox alignment="BASELINE_CENTER" fillWidth="false" layoutX="335.0" layoutY="20.0" maxHeight="1.7976931348623157E308" minWidth="250.0" prefHeight="700.0" prefWidth="250.0" HBox.hgrow="NEVER">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+               <children>
+                  <AnchorPane fx:id="ap4" maxWidth="240.0" minHeight="70.0" minWidth="240.0" prefHeight="70.0" prefWidth="240.0" style="-fx-background-color: #252525; -fx-background-radius: 20;" VBox.vgrow="NEVER" />
+                  <Region maxHeight="1.7976931348623157E308" minHeight="5.0" minWidth="250.0" prefHeight="1000.0" prefWidth="250.0" />
+                  <AnchorPane fx:id="ap5" minHeight="305.0" minWidth="240.0" prefHeight="305.0" prefWidth="240.0" style="-fx-background-color: #252525; -fx-background-radius: 20;" />
+                  <Region maxHeight="1.7976931348623157E308" minHeight="5.0" minWidth="250.0" prefHeight="1000.0" prefWidth="250.0" />
+                  <AnchorPane fx:id="ap6" minHeight="305.0" minWidth="240.0" prefHeight="305.0" prefWidth="240.0" style="-fx-background-color: #252525; -fx-background-radius: 20;" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
