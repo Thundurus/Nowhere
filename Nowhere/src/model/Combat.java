@@ -262,7 +262,7 @@ public class Combat
 				order.remove(0);
 				continue;
 			}
-			List<Character> targets = new ArrayList<Character>();
+			ArrayList<Character> targets = new ArrayList<Character>();
 		
 			//The first "Character" object can actually be a String defining who the targets are.
 			if(actions.get(order.get(0)).get(1).getClass() == String.class)
@@ -305,6 +305,11 @@ public class Combat
 		
 		if (stillConscious.size() == 1 || stillConscious.stream().allMatch(c -> c.getSide() == stillConscious.get(0).getSide()))
 		{
+			players.forEach(c -> 
+			{
+				Master.addStatus(getInstance(), new CharacterSnapshot(c));
+			});
+			
 			if(stillConscious.size() == 1)
 				TextManager.appendText(("Only one fighter is still conscious."), TextStyle.DEBUG);
 			if(stillConscious.stream().allMatch(c -> c.getSide() == stillConscious.get(0).getSide()))
@@ -347,6 +352,7 @@ public class Combat
 			{
 				chooseAction(fighter, new Wait(), new ArrayList<Object>(Arrays.asList(fighter)));
 			}
+			Master.addStatus(getInstance(), new CharacterSnapshot(fighter));
 		}
 		
 		Master.nextTurn(instance);

@@ -18,7 +18,7 @@ Nowhere uses Java 10.
 * Hook command line input to a controllable character. //No longer needed.
 * Create a basic AI for the NPC enemies to use in battles. //I have decided to make this a much bigger thing.
 
-* Create a system for compiling parsable battle data from battles.
+* (Done) Create a system for compiling parsable battle data from battles.
 * Explain what the project is about in a way that does not require one to fully read all of the code.
 * ...
 * Develop the baseline AI for NPC opponents.

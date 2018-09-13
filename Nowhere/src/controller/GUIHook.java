@@ -5,13 +5,14 @@ import java.math.MathContext;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.ParallelTransition;
@@ -57,12 +58,23 @@ import view.TextManager;
 
 public class GUIHook implements Initializable
 {
-	public static int defaultChildren = 1; //The amount of children a StackPane on the map grid can have which, if exceeded, causes the program to assume it is in use by a button.
+	/**
+	 * The amount of children a StackPane on the map grid can have which, if exceeded, causes the program to assume it is in use by a button.
+	 */
+	public static int defaultChildren = 1;
 	public static ArrayDeque<Supplier<Void>> todo = new ArrayDeque<Supplier<Void>>();
 	public static LinkedHashMap<ButtonMapping, Pane> mapping = new LinkedHashMap<ButtonMapping, Pane>();
 	public static LinkedHashMap<ButtonMapping, Pane> leftright = new LinkedHashMap<ButtonMapping, Pane>();
 	public static LinkedHashMap<SceneMapping, Pane> scenes = new LinkedHashMap<SceneMapping, Pane>();
-	public static boolean locked = false; //Determines whether statDisplays may be added or removed.
+	/**
+	 * Stack containing previously saved sets of buttons. Saved sets of buttons can be restored with {@link #restoreButtons()}.
+	 */
+	public static ArrayDeque<LinkedHashMap<List<String>, List<EventHandler<ActionEvent>>>> storedButtons = new ArrayDeque<LinkedHashMap<List<String>, List<EventHandler<ActionEvent>>>>();
+	/**
+	 * Determines whether statDisplays may be added or removed to a pane.
+	 * <p>It may be better to have per pane locks, or even per stat per pane locks.
+	 */
+	public static boolean locked = false;
 	public static Pane[][] grid;
     
 	@FXML
@@ -586,11 +598,16 @@ public class GUIHook implements Initializable
 		Master.getPlayerCharacter().restoreStat("mp", 1000, true);
 		Master.getPlayerCharacter().changeStat("endurance", 50);
 		Master.getPlayerCharacter().restoreStat("sp", 1000, true);
+		Master.getPlayerCharacter().restoreStat("hp", 1000, true);
 //		System.out.println(Master.getPlayerCharacter().getStat("mp").intValue());
+		Master.getPlayerCharacter().addForm("Other Form", new ArrayList<Type>(List.of(Type.STEEL, Type.AIR)), true);
 		Master.getPlayerCharacter().addSkill(new AvidiaHolyWater());
 		Master.getPlayerCharacter().addSkill(new WaterDragon());
 		Master.getPlayerCharacter().addSkill(new SummonedGatling());
 		Master.getPlayerCharacter().addSkill(new WaterSphere());
+//		Master.getPlayerCharacter().changeStat("endurance", 20);
+//		Master.getPlayerCharacter().restoreStat("sp", 1000, true);
+		Master.getPlayerCharacter().changeForm(0);
 		Master.newNPC("THE ADVERSARY");
 		Master.getNPCByID(0).modStat("speed", 100);
 		Master.getNPCByID(0).addType(Type.GHOST);
@@ -599,8 +616,9 @@ public class GUIHook implements Initializable
     
     
     /**
-     * @param text: The label text.
-     * @param position: Position on the virtual keyboard.
+     * @param text the label text
+     * @param position position on the virtual keyboard
+     * @return the generated {@link Button}
      */
     public static Button genButton(String text, ButtonMapping position)
     {
@@ -668,8 +686,11 @@ public class GUIHook implements Initializable
     	}
     }
     /**
-     * @param buttons: LinkedHashMap containing the String:ButtonMapping pairs for button setting. May ONLY be used to set the visible buttons.
-     * @return
+     * May only be used to set the visible buttons.
+     * 
+     * @param buttons {@link ArrayList}<{@link Button}> containing the buttons to set
+     * @param labels {@link ArrayList}<{@link Label}> containing the labels to set
+     * @param index 
      */
     public static void setButtons(ArrayList<Button> buttons, ArrayList<Label> labels, int index)
     {
@@ -761,6 +782,8 @@ public class GUIHook implements Initializable
     }
     /**
      * Clears visible buttons. 
+     * 
+     * @see #clearButtons()
      */
     public static void unsetButtons()
     {
@@ -790,6 +813,8 @@ public class GUIHook implements Initializable
     }
     /**
      * Clears visible buttons, deletes all mappings from the master button lists.
+     * 
+     * @see #unsetButtons()
      */
     public static void clearButtons()
     {
@@ -845,7 +870,7 @@ public class GUIHook implements Initializable
     	button.setTooltip(tooltip);
     	button.setOnAction(e ->
     	{
-    		//TODO: This may require amending if/when the cost of skills can be modified by perks. 
+    		//TODO: This may require amending if/when the cost of skills can be modified by perks depending on the implementation. 
     		//Spells cost MP, all other skills cost SP
     		if((!skill.getFlags().contains(SkillFlags.SPELL) && !(attacker.getStat("sp").doubleValue() >= skill.baseCost)) || (skill.getFlags().contains(SkillFlags.SPELL) && !(attacker.getStat("mp").doubleValue() >= skill.baseCost)))
     		{
@@ -860,17 +885,57 @@ public class GUIHook implements Initializable
     	});
     	TextManager.appendText(("Button \"" + skill.name + "\" set."), TextStyle.DEBUG);
     }
+    /**
+     * @param targetses
+     * @param skills
+     * @return
+     * @see #setAttackButton(Button, model.Character, ArrayList, Skill) setAttackButton
+     */
     public static ArrayList<Button> setAttackButtons(ArrayList<ArrayList<Object>> targetses, ArrayList<Skill> skills)
     {
+    	storedButtons.clear();
     	ArrayList<String> str = new ArrayList<String>();
     	for(int i = 0; i < skills.size(); i++)
     	{
     		str.add(skills.get(i).name);
     	}
+    	int[] forms = Master.getPlayerCharacter().getForms();
+    	if(forms.length > 1)
+    	{
+    		str.add("Change Form");
+    	}
     	ArrayList<Button> buttons = resetButtons(str);
-    	for(int i = 0; i < buttons.size(); i++)
+    	for(int i = 0; i < skills.size(); i++)
     	{
     		setAttackButton(buttons.get(i), Master.getPlayerCharacter(), targetses.get(i), skills.get(i));
+    	}
+    	
+    	//TODO: Possibly check to see if more than one forms are actually usable as opposed to merely existing.
+    	if(forms.length > 1)
+    	{
+    		Button changeForm = buttons.get(buttons.size() - 1);
+    		Tooltip tooltip = new Tooltip("Swap to another form.");
+        	tooltip.setShowDelay(new Duration(350));
+        	changeForm.setTooltip(tooltip);
+    		changeForm.setOnAction(e ->
+    		{
+    			ArrayList<String> buttonStrings = new ArrayList<String>();
+    			ArrayDeque<Supplier<Void>> functions = new ArrayDeque<Supplier<Void>>();
+    			int exclude = Master.getPlayerCharacter().getFormIndex();
+    			for(int i : forms)
+    			{
+    				if(i != exclude)
+    				{
+    					buttonStrings.add(Master.getPlayerCharacter().getFormName(i));
+    					functions.addLast(() -> 
+    					{
+    						Master.getPlayerCharacter().changeForm(i);
+    						return null;
+    					});
+    				}
+    			}
+    			submenu(buttonStrings, functions);
+    		});
     	}
     	return buttons;
     }
@@ -889,6 +954,71 @@ public class GUIHook implements Initializable
     {
     	scenes.get(SceneMapping.MAIN).getChildren().removeAll(scenes.get(SceneMapping.MAIN).getChildren());
     }
+    
+    
+    /**
+     * Creates a submenu for extended options, and places it on the virtual keyboard. The previous buttons are saved into {@link storedButtons}, and can be restored using {@link #restoreButtons()}. A "Back" button that calls {@link #restoreButtons()} is added automatically and should not be manually included.
+     * <p><code>functions</code> is a queue, and should be in FIFO order relative to the buttons.
+     * 
+     * @param buttons {@link ArrayList} containing the names of the buttons in the submenu
+     * @param functions queue containing the functions for each button
+     * @see #restoreButtons()
+     */
+    public static void submenu(ArrayList<String> buttons, ArrayDeque<Supplier<Void>> functions)
+    {
+    	if(buttons.size() != functions.size())
+		{
+			throw new IllegalArgumentException("The number of buttons and functions must be equal.");
+		}
+    	storedButtons.push(new LinkedHashMap<List<String>, List<EventHandler<ActionEvent>>>());
+    	for(int i = 0; i < Master.getButtonLists(); i++)
+    	{
+    		storedButtons.peek().put(Master.getLabels(i).stream().map(e -> e.getText()).collect(Collectors.toList()), Master.getButtons(i).stream().map(e -> e.getOnAction()).collect(Collectors.toList()));
+    	}
+    	buttons.add("Back");
+    	ArrayList<Button> menuButtons = resetButtons(buttons);
+    	menuButtons.get(0).getOnAction();
+    	int i = 0;
+    	while(!functions.isEmpty())
+    	{
+    		Supplier<Void> action = functions.pop();
+    		menuButtons.get(i).setOnAction(e ->
+    		{
+    			//Interesting that this does not work. Seemingly it tries to wait until the action is actually called until accessing the stack.
+//    			functions.pop().get();
+    			action.get();
+    		});
+    		i++;
+    	}
+    	menuButtons.get(menuButtons.size() - 1).setOnAction(e ->
+    	{
+    		restoreButtons();
+    	});
+    }
+    /**
+     * Restores the latest saved set of buttons from {@link #storedButtons}. 
+     */
+    public static void restoreButtons()
+    {
+    	if(storedButtons.isEmpty())
+    	{
+    		TextManager.appendText(("Attempted to restore a nonexistant set of buttons."), TextStyle.ERROR);
+    		return;
+    	}
+    	ArrayList<String> labels = new ArrayList<String>();
+    	ArrayList<EventHandler<ActionEvent>> events = new ArrayList<EventHandler<ActionEvent>>();
+    	for(Map.Entry<List<String>, List<EventHandler<ActionEvent>>> i : storedButtons.pop().entrySet())
+    	{
+    		labels.addAll(i.getKey());
+    		events.addAll(i.getValue());
+    	}
+    	ArrayList<Button> buttons = resetButtons(labels);
+    	for(int i = 0; i < buttons.size(); i++)
+    	{
+    		buttons.get(i).setOnAction(events.get(i));
+    	}
+    }
+    
     
     
     //Under no circumstances should conflicting animations be allowed to play.
@@ -959,7 +1089,7 @@ public class GUIHook implements Initializable
 		}
 		
 		ArrayDeque<String> statVX = new ArrayDeque<String>();		
-		if(stat.equalsIgnoreCase("hp") && percentage != statDisplay.get("hp"))
+		if(stat.equalsIgnoreCase("hp"))
 		{
 			statVX.push(new String("hp"));
 			statVX.push(new String("HP"));
@@ -996,6 +1126,12 @@ public class GUIHook implements Initializable
   		if(percentage > statDisplay.get(statV1))
   		{
   			slide.setByX(slide.getByX() * -1);
+  			//TODO: Figure out a way to set the text effect for $STATnumber to nothing.
+  			((Label) nodes.get(statV2 + "number")).textFillProperty().set(Color.web("#25F500"));
+  		}
+  		else if(percentage < statDisplay.get(statV1))
+  		{
+  			((Label) nodes.get(statV2 + "number")).textFillProperty().set(Color.web("#F50043"));
   		}
   		
   		//Stat number value changes
@@ -1038,8 +1174,7 @@ public class GUIHook implements Initializable
 			}
 		});
 		
-		//TODO: Figure out a way to set the text effect for $STATnumber to nothing.
-		((Label) nodes.get(statV2 + "number")).textFillProperty().set(Color.web("#f50043"));
+		
 		locked = true;
 		animation.play();
 		

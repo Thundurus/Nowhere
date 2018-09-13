@@ -2,5 +2,5 @@ package view;
 
 public enum TextStyle
 {
-	REGULAR, DAMAGE, DEBUG;
+	REGULAR, DAMAGE, DEBUG, ERROR;
 }

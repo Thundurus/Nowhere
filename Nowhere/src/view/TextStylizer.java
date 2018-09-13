@@ -12,18 +12,18 @@ public class TextStylizer
 	public static Text styleText(String txt, TextStyle style)
 	{
 		Text text = new Text(txt);
-		if(style == TextStyle.REGULAR)
+		switch(style)
 		{
-			text.setId("regular");
-		}
-		if(style == TextStyle.DAMAGE)
-		{
-			text.setId("damage");
-		}
-		if(style == TextStyle.DEBUG)
-		{
-			text.setText("\nDEBUG: " + txt);
-			text.setId("debug");
+			case REGULAR:	text.setId("regular");
+							break;
+			case DAMAGE:	text.setId("damage");
+							break;
+			case DEBUG:		text.setText("\nDEBUG: " + txt);
+							text.setId("debug");
+							break;
+			case ERROR:		text.setText("\nERROR: " + txt);
+							text.setId("error");
+							break;
 		}
 		return text;
 	}

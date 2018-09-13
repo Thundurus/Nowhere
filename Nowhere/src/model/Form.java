@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import model.Skills.BasicAttack;
 import model.Skills.Wait;
+import view.TextManager;
+import view.TextStyle;
 
 public class Form
 {
@@ -23,13 +25,14 @@ public class Form
 	protected int[] baseStats = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //[24]
 	protected int[] tempStats = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; //[24]
 	
-	protected int maxHP, maxMP, maxSP, level, xp;
+	protected int maxHP, maxMP, maxSP, level, xp, index;
 	protected double hp, mp, sp;
 	
-	public Form(String name, Character character)
+	public Form(String name, Character character, int index)
 	{
 		this.name = name;
 		this.character = character;
+		this.index = index;
 		level = 1;
 		xp = 0;
 		baseStats[0] = 3;
@@ -88,6 +91,7 @@ public class Form
 	 * 
 	 * @param stat {@link String} representation of a {@link Character} stat
 	 * @return {@link Number} representing the specified stat
+	 * @throws IllegalArgumentException when a String that does not match any of the stats is passed
 	 */
 	public Number getStat (String stat)
 	{
@@ -263,7 +267,7 @@ public class Form
 				return (baseStats[19] + tempStats[19]) * multiplier;
 				
 			default:
-				return -1;
+				throw new IllegalArgumentException("The stat \"" + stat + "\" does not exist.");
 		}
 	}
 }

@@ -1,13 +1,15 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import util.TurnData;
 import view.TextManager;
 import view.TextStyle;
 
 public class ActParser
 {
-	public static void parse(Character chara, Skill action, List<Character> targets)
+	public static void parse(Character chara, Skill action, ArrayList<Character> targets)
 	{		
 		switch(action.baseArchetype)
 		{			
@@ -17,7 +19,7 @@ public class ActParser
 			case SPELL: spell(chara, targets, action);
 			break;
 			
-			//TODO: Wait effects.
+			//TODO: Wait effects (e.g. any effects granted by waiting).
 			case WAIT:	if(action.name.equalsIgnoreCase("Nothing"))
 						{
 							TextManager.appendText(("\n" + chara + " did nothing."), TextStyle.REGULAR);
@@ -26,7 +28,8 @@ public class ActParser
 						{
 							TextManager.appendText(("\n" + chara + " waited."), TextStyle.REGULAR);
 						}
-			break;
+						Master.addAction(Master.getCombatInstance(chara.getCombatInstance()).getInstance(), new TurnData(chara, targets, action));
+						break;
 			
 			default:
 			break;

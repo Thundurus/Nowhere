@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -12,14 +11,23 @@ import util.XY;
 import view.TextManager;
 import view.TextStyle;
 
+/**
+ * Nodes represent the fundamental units of location, logically containing Characters and Items in their areas.
+ * <p>While their current implementation uses a square grid, Nodes technically support travel in 8 directions.
+ *
+ */
 public class Node
 {
 	private String location;
 	private HashMap<Direction, Node> links = new HashMap<Direction, Node>();
 	private HashMap<Direction, String> obstructions = new HashMap<Direction, String>();
 	private ArrayList<Character> characters = new ArrayList<Character>();
-	private Boolean wasVisited = false;
+	//TODO: Find out what to do with "wasVisited". It would need to be character-specific in the case of multiplayer, but is otherwise acceptable in function.
+	private boolean wasVisited = false;
 	private XY xy = new XY(0,0);
+	/**
+	 * The <code>actions</code> map contains functions that map to the additional options afforded to characters within this {@link Node}, and map to the buttons added to the virtual keyboard.
+	 */
 	private LinkedHashMap<String, Supplier<Void>> actions = new LinkedHashMap<String, Supplier<Void>>();
 
 	public static Node nullNode()
@@ -55,7 +63,25 @@ public class Node
 		this.location = location;
 	}
 
+	/**
+	 * Returns an unmodifiable copy of the links from this {@link Node}.
+	 * 
+	 * @return unmodifiable copy of <code>links</code> {@link HashMap}<{@link Direction}, {@link Node}>.
+	 * @see #getLinksModifiable()
+	 */
 	public HashMap<Direction, Node> getLinks()
+	{
+		final HashMap<Direction, Node> copy = new HashMap<Direction, Node>(links);
+		return copy;
+	}
+	
+	/**
+	 * Returns <code>links</code> from this {@link Node}.
+	 * 
+	 * @return the <code>links</code> {@link HashMap}<{@link Direction}, {@link Node}> used by this {@link Node}.
+	 * @see #getLinksModifiable()
+	 */
+	public HashMap<Direction, Node> getLinksModifiable()
 	{
 		return links;
 	}
@@ -63,7 +89,7 @@ public class Node
 	//Currently, a hypothetical NodeA can have a link to NodeB without NodeB necessarily having a complementary link to NodeA, but this will not be the default behavior. Instead, this will require either for the complementary link to be removed afterwards, or a new method which does this.
 	public void setLinks(HashMap<Direction, Node> links)
 	{
-		this.links = links;
+		this.links = new HashMap<Direction, Node>(links);
 	}
 	
 	public void addLink(Direction direction, Node link)

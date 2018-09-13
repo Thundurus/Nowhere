@@ -227,6 +227,10 @@ public class Master
 	{
 		battleData.get(instance).addAction(action);
 	}
+	public static void addStatus(String instance, CharacterSnapshot snapshot)
+	{
+		battleData.get(instance).addStatus(snapshot);
+	}
 	public static void printBattleData(String instance)
 	{
 		System.out.println(battleData.get(instance).toString());

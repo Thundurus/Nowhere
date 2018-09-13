@@ -35,6 +35,9 @@ public class Character
 	 * <p>[4] is 1~{@link Combat#MAX_SIZE}, and represents the side they are fighting on. Characters with the same [4] value are considered to be allies, and do not need to defeat each other to end battle.
 	 */
 	protected int[] fightingStats = {0,0,0,0,0};
+	/**
+	 *The stat display is the {@link VBox} containing the HP, MP, and SP displays for this {@link Character}. 
+	 */
 	protected VBox statDisplay;
 	protected LinkedHashMap<String, Double> displayed = new LinkedHashMap<String, Double>();
 	
@@ -45,12 +48,14 @@ public class Character
 	{
 		this.name = name;
 		id = characterID;
-		currentForm = new Form("Base", this);
+		forms[0] = new Form("Base", this, 0);
+		currentForm = forms[0];
 		equipped[0] = new Axe();
 		equipped[1] = new Nothing();
 		equipped[2] = new Nothing();
 		equipped[3] = new Nothing();
 		//This is allegedly poor form.
+		//This is definitely poor form!
 		recalculate();
 		currentForm.hp = currentForm.maxHP;
 		currentForm.mp = currentForm.maxMP;
@@ -70,6 +75,18 @@ public class Character
 		return name;
 	}
 	
+	public void calculateMaxHP(Form form)
+	{
+		form.calculateMaxHP();
+	}
+	public void calculateMaxMP(Form form)
+	{
+		form.calculateMaxMP();
+	}
+	public void calculateMaxSP(Form form)
+	{
+		form.calculateMaxSP();
+	}
 	public void calculateMaxHP()
 	{
 		currentForm.calculateMaxHP();
@@ -82,19 +99,15 @@ public class Character
 	{
 		currentForm.calculateMaxSP();
 	}
-	/**
-	 * Calculates the stats that are derived from base stats.
-	 * TODO: Maybes: Accuracy + Evasion, Psychic defense stat
-	 */
-	public void recalculate()
+	public void recalculate(Form form)
 	{
 		//I do not recall off-hand whether or not this works in this language. Needs testing.
 		//I could also just not do it, but where is the learning in that???
-		for (Effect i : currentForm.effects)
+		for (Effect i : form.effects)
 		{
 			if(i.remainingTime <= 0)
 			{
-				currentForm.effects.remove(i);
+				form.effects.remove(i);
 			}
 		}
 		
@@ -104,7 +117,7 @@ public class Character
 		int temp = 0;
 		
 		//physical attack
-		temp =  currentForm.level * 5;
+		temp =  form.level * 5;
 		temp += getStat("eStrength").intValue() * 5;
 		temp += getWeapon().physicalAttack;
 		temp *= getWeapon().physicalAttackModifier;
@@ -113,11 +126,11 @@ public class Character
 		{
 			temp += equipped[i].physicalAttack;
 		}
-		currentForm.baseStats[11] = temp;
+		form.baseStats[11] = temp;
 		
 		
 		//magic attack
-		temp = currentForm.level * 5;
+		temp = form.level * 5;
 		temp += getStat("eIntelligence").intValue() * 5;
 		temp += getWeapon().magicAttack;
 		temp *= getWeapon().magicAttackModifier;
@@ -126,7 +139,7 @@ public class Character
 		{
 			temp += equipped[i].magicAttack;
 		}
-		currentForm.baseStats[12] = temp;
+		form.baseStats[12] = temp;
 		
 //		//accuracy
 //		temp = 0;
@@ -135,7 +148,7 @@ public class Character
 //		{
 //			temp += equipped[i].accuracyMod;
 //		}
-//		currentForm.baseStats[13] = temp;
+//		form.baseStats[13] = temp;
 		
 		//critical chance
 		temp = (getStat("eSkill").intValue() / 2);
@@ -143,7 +156,7 @@ public class Character
 		{
 			temp += equipped[i].criticalChanceMod;
 		}
-		currentForm.baseStats[14] = temp;
+		form.baseStats[14] = temp;
 		
 		//critical damage
 		temp = 0;
@@ -151,7 +164,7 @@ public class Character
 		{
 			temp += equipped[i].criticalDamageMod;
 		}
-		currentForm.baseStats[15] = temp;
+		form.baseStats[15] = temp;
 		
 //		//evasion
 //		temp = 0;
@@ -160,7 +173,7 @@ public class Character
 //		{
 //			temp += equipped[i].evasionMod;
 //		}
-//		currentForm.baseStats[16] = temp;
+//		form.baseStats[16] = temp;
 		
 		//physical defense
 		temp = getStat("eEndurance").intValue() * 5;
@@ -168,15 +181,15 @@ public class Character
 		{
 			temp += equipped[i].physicalDefense;
 		}
-		currentForm.baseStats[17] = temp;
+		form.baseStats[17] = temp;
 		
 		//magic defense
-		temp = getStat("eWillPower").intValue() * 5;
+		temp = getStat("eWillpower").intValue() * 5;
 		for (int i = 0; i < equipped.length;i++)
 		{
 			temp += equipped[i].magicDefense;
 		}
-		currentForm.baseStats[18] = temp;
+		form.baseStats[18] = temp;
 		
 		//weapon handling
 		temp = ((getStat("eSkill").intValue()) * 5);
@@ -184,11 +197,19 @@ public class Character
 		{
 			temp += equipped[i].handlingMod;
 		}
-		currentForm.baseStats[19] = temp;
+		form.baseStats[19] = temp;
 		
-		calculateMaxHP();
-		calculateMaxMP();
-		calculateMaxSP();
+		calculateMaxHP(form);
+		calculateMaxMP(form);
+		calculateMaxSP(form);
+	}
+	/**
+	 * Calculates the stats that are derived from base stats.
+	 * TODO: Maybes: Accuracy + Evasion, Psychic defense stat
+	 */
+	public void recalculate()
+	{
+		recalculate(currentForm);
 	}
 	public void statValidator()
 	{
@@ -304,6 +325,7 @@ public class Character
 			case "weaponHandling":
 				currentForm.baseStats[19] += amount;
 				break;
+			default: throw new IllegalArgumentException("The stat \"" + stat + "\" does not exist.");
 		}
 		
 		statValidator();
@@ -396,6 +418,7 @@ public class Character
 			case "weaponHandling":
 				currentForm.tempStats[19] += amount;
 				break;
+			default: throw new IllegalArgumentException("The stat \"" + stat + "\" does not exist.");
 		}
 		
 		statValidator();
@@ -442,6 +465,7 @@ public class Character
 					displayed.put("sp", (currentForm.sp/currentForm.maxSP) * 100);
 				}
 				break;
+			default: throw new IllegalArgumentException("The stat \"" + stat + "\" does not exist.");
 		}
 	}
 	/**
@@ -521,7 +545,117 @@ public class Character
 	//TODO: This is not how types work.
 	public void addType(Type type)
 	{
-		this.currentForm.type.add(type);
+		currentForm.type.add(type);
+	}
+	/**
+	 *Returns the <code>index</code> of <code>currentForm</code> in {@link forms}.
+	 * 
+	 * @return index of the current form
+	 */
+	public int getFormIndex()
+	{
+		return currentForm.index;
+	}
+	/**
+	 * Returns the <code>name</code> of the specified {@link Form}.
+	 * 
+	 * @param index the index of {@link forms} containing the desired {@link Form}
+	 * @return name of the current form
+	 * @throws IllegalArgumentException if the index is negative
+	 */
+	public String getFormName(int index)
+	{
+		if(index < 0)
+		{
+			throw new IllegalArgumentException("The index must be non-negative.");
+		}
+		if(forms[index] == null)
+		{
+			TextManager.appendText(("Attempted to access nonexistant form on " + name + "."), TextStyle.ERROR);
+			return "ERROR";
+		}
+		return forms[index].name;
+	}
+	/**
+	 * Returns the indices in <code>forms</code> that contain valid (non-null) forms.  
+	 * <p>The reason why this method does not simply return the quantity of forms is because we are not yet sure if <code>forms</code> is allowed to have noncontiguous placement of Forms.
+	 * 
+	 * @return int[] containing the indices in <code>forms</code> that contain a {@link Form}.
+	 */
+	public int[] getForms()
+	{
+		//There is probably a way to do this in a single pass without using an additional structure.
+		ArrayList<Integer> indicies = new ArrayList<Integer>(forms.length);
+		for(int i = 0; i < forms.length; i++)
+		{
+			if(forms[i] != null)
+				indicies.add(i);
+			else
+				break;
+		}
+		return indicies.stream().mapToInt(i -> Integer.valueOf(i)).toArray();		
+	}
+	public void addForm(String name, ArrayList<Type> types, boolean change)
+	{
+		int empty = -1;
+		for(int i = 0; i < forms.length; i++)
+		{
+			if(forms[i] == null)
+			{
+				empty = i;
+				break;
+			}
+		}
+		if(empty != -1)
+		{
+			forms[empty] = new Form(name, this, empty);
+			for(Type t : types)
+			{
+				forms[empty].type.add(t);
+			}
+			recalculate(forms[empty]);
+			forms[empty].hp = forms[empty].maxHP;
+			forms[empty].mp = forms[empty].maxMP;
+			forms[empty].sp = forms[empty].maxSP;
+			if(change)
+			{
+				changeForm(empty);
+			}
+		}
+		else
+		{
+			//TODO: "Replace Form" dialogue 
+		}
+	}
+	/**
+	 * Changes the used form for this Character. If this Character is currently in an active {@link Combat}, also updates their available actions.
+	 * 
+	 * @param index the index of {@link forms} containing the desired {@link Form}
+	 * @throws IllegalArgumentException if the index is negative
+	 */
+	public void changeForm(int index)
+	{
+		if(index < 0)
+		{
+			throw new IllegalArgumentException("The index must be non-negative.");
+		}
+		if(forms[index] == null)
+		{
+			TextManager.appendText(("Attempted to set " + name + "'s form to nothing."), TextStyle.ERROR);
+			return;
+		}
+		currentForm = forms[index];
+		TextManager.appendText((forms[index].name + " form set for " + name +  "."), TextStyle.DEBUG);
+		if(fightingStats[0] == 1)
+		{
+			Master.setAttackSkills();
+			Master.changeStatDisplay(this, "hp", currentForm.hp, (currentForm.hp/currentForm.maxHP) * 100);
+			displayed.put("hp", (currentForm.hp/currentForm.maxHP) * 100);
+			Master.changeStatDisplay(this, "mp", currentForm.mp, (currentForm.mp/currentForm.maxMP) * 100);
+			displayed.put("mp", (currentForm.mp/currentForm.maxMP) * 100);
+			Master.changeStatDisplay(this, "sp", currentForm.sp, (currentForm.sp/currentForm.maxSP) * 100);
+			displayed.put("sp", (currentForm.sp/currentForm.maxSP) * 100);
+		}
 	}
 	
 	
@@ -653,7 +787,6 @@ public class Character
 		skill.executeOnTarget(this);
 		statValidator();
 		Master.addAction(Master.getCombatInstance(getCombatInstance()).getInstance(), new TurnData(attacker, targets, skill, totalDamage));
-		return;
 	}
 	
 	
@@ -797,10 +930,24 @@ public class Character
 	 * @param characterID unique ID within the {@link Combat} instance
 	 * @param combatInstance ID of the {@link Combat} instance
 	 * @param side team identifier (value is shared with allies)
+	 * @throws IllegalArgumentException if <code>isActive</code>, <code>characterID</code>, or <code>side</code> are negative numbers other than -1
 	 * @see #fightingStats
 	 */
 	public void setFightingStatus(boolean isFighting, boolean isActive, int characterID, int combatInstance, int side)
 	{
+		if(characterID < -1)
+		{
+			throw new IllegalArgumentException("The \"characterID\" argument must be -1 at minimum.");
+		}
+		if(combatInstance < -1)
+		{
+			throw new IllegalArgumentException("The \"combatInstance\" argument must be -1 at minimum.");
+		}
+		if(side < -1)
+		{
+			throw new IllegalArgumentException("The \"side\" argument must be -1 at minimum.");
+		}
+		
 		fightingStats[0] = isFighting ? 1 : 0;
 		fightingStats[1] = isActive ? 1 : 0;
 		if (characterID != -1) fightingStats[2] = characterID;
@@ -815,10 +962,32 @@ public class Character
 	 * @param characterID unique ID within the {@link Combat} instance
 	 * @param combatInstance ID of the {@link Combat} instance
 	 * @param side team identifier (value is shared with allies)
+	 * @throws IllegalArgumentException if <code>isFighting</code> or <code>isActive</code> are not between -1 and 1, or if <code>isActive</code>, <code>characterID</code>, or <code>side</code> are negative numbers other than -1
 	 * @see #fightingStats
 	 */
 	public void setFightingStatus(int isFighting, int isActive, int characterID, int combatInstance, int side)
 	{
+		if(isFighting < -1 || isFighting > 1)
+		{
+			throw new IllegalArgumentException("The \"isFighting\" argument must be between -1 and 1.");
+		}
+		if(isActive < -1 || isActive > 1)
+		{
+			throw new IllegalArgumentException("The \"isActive\" argument must be between -1 and 1.");
+		}
+		if(characterID < -1)
+		{
+			throw new IllegalArgumentException("The \"characterID\" argument must be -1 at minimum.");
+		}
+		if(combatInstance < -1)
+		{
+			throw new IllegalArgumentException("The \"combatInstance\" argument must be -1 at minimum.");
+		}
+		if(side < -1)
+		{
+			throw new IllegalArgumentException("The \"side\" argument must be -1 at minimum.");
+		}
+		
 		if (isFighting != -1) fightingStats[0] = isFighting;
 		if (isActive != -1) fightingStats[1] = isActive;
 		if (characterID != -1) fightingStats[2] = characterID;
@@ -843,6 +1012,11 @@ public class Character
 		final int[] copy = {fightingStats[0], fightingStats[1], fightingStats[2], fightingStats[3], fightingStats[4]};
 		return copy;
 	}
+	/**
+	 * Returns whether or not the character is considered to be fighting. More specifically, it returns <code>true</code> when <code>{@link #fightingStats}[0] == 1</code>.
+	 * 
+	 * @return <code>true</code> if this character is currently in an active {@link Combat} instance.
+	 */
 	public boolean isFighting()
 	{
 		return (fightingStats[0] == 1) ? true : false;
@@ -851,10 +1025,16 @@ public class Character
 	{
 		return fightingStats[1] == 1 ? true : false;
 	}
+	/**
+	 * Returns <code>true</code> when this {@link Character} has either been defeated in the current {@link Combat}, or is currently affected with {@link Incapacitated}, a {@link StatusEffect}. 
+	 * 
+	 * @return true if this {@link Character} cannot choose an action
+	 */
 	public boolean isIncapacitated()
 	{
 		return (!isActive() || is(new model.StatusEffects.Incapacitated()));
 	}
+	//TODO: This is stupid and should go.
 	public Optional<ArrayList<Character>> getEnemies()
 	{
 		if(isFighting())
@@ -965,11 +1145,12 @@ public class Character
 		for(char c : name.toCharArray())
 		{
 			j += (int) Math.pow(java.lang.Character.getNumericValue(c) + i, 2);
-			j += getID();
+			j += id;
 			i++;
 		}
 		return j;
 	}
+	@Override
 	public String toString()
 	{
 		return name;
