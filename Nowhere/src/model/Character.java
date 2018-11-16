@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javafx.scene.layout.VBox;
 import model.Items.Nothing;
@@ -72,7 +73,8 @@ public class Character
 	}
 	public String getName()
 	{
-		return name;
+		final String copy = new String(name);
+		return copy;
 	}
 	
 	public void calculateMaxHP(Form form)
@@ -481,6 +483,10 @@ public class Character
 	{
 		damageStat(stat, amount * -1, display);
 	}
+	public void updateStatDisplay()
+	{
+		Master.updateStatDisplay(this);
+	}
 
 	public Weapon getWeapon()
 	{
@@ -489,7 +495,7 @@ public class Character
 	//TODO: Fix this.
 	public String listEquipped()
 	{
-		StringBuffer items = new StringBuffer();
+		StringBuilder items = new StringBuilder();
 		if (equipped[1].name == "nothing" && equipped[2].name == "nothing" && equipped[3].name == "nothing" && equipped[4].name == "nothing")
 			items.append("You are not wearing anything." );
 		else
@@ -504,7 +510,7 @@ public class Character
 	}
 	public String listInventory()
 	{
-		StringBuffer items = new StringBuffer();
+		StringBuilder items = new StringBuilder();
 		items.append("You currently possess: ");
 		for(Item i : inventory)
 		{
@@ -514,7 +520,7 @@ public class Character
 	}
 	public String listPerks()
 	{
-		StringBuffer perkz = new StringBuffer();
+		StringBuilder perkz = new StringBuilder();
 		perkz.append("You currently possess:\n");
 		for(String i : currentForm.perks)
 		{
@@ -574,7 +580,7 @@ public class Character
 			TextManager.appendText(("Attempted to access nonexistant form on " + name + "."), TextStyle.ERROR);
 			return "ERROR";
 		}
-		return forms[index].name;
+		return forms[index].getName();
 	}
 	/**
 	 * Returns the indices in <code>forms</code> that contain valid (non-null) forms.  
@@ -628,7 +634,7 @@ public class Character
 		}
 	}
 	/**
-	 * Changes the used form for this Character. If this Character is currently in an active {@link Combat}, also updates their available actions.
+	 * Changes the used form for this Character. Removes all effects not marked as <code>persistent</code>. If this Character is currently in an active {@link Combat} instance, also updates their available actions.
 	 * 
 	 * @param index the index of {@link forms} containing the desired {@link Form}
 	 * @throws IllegalArgumentException if the index is negative
@@ -644,26 +650,61 @@ public class Character
 			TextManager.appendText(("Attempted to set " + name + "'s form to nothing."), TextStyle.ERROR);
 			return;
 		}
+		for(Effect e : getEffects())
+		{
+			if(!e.persistent)
+			{
+				removeEffect(e);
+			}
+		}
+		currentForm.counterState.clear();
 		currentForm = forms[index];
 		TextManager.appendText((forms[index].name + " form set for " + name +  "."), TextStyle.DEBUG);
 		if(fightingStats[0] == 1)
 		{
 			Master.setAttackSkills();
-			Master.changeStatDisplay(this, "hp", currentForm.hp, (currentForm.hp/currentForm.maxHP) * 100);
-			displayed.put("hp", (currentForm.hp/currentForm.maxHP) * 100);
-			Master.changeStatDisplay(this, "mp", currentForm.mp, (currentForm.mp/currentForm.maxMP) * 100);
-			displayed.put("mp", (currentForm.mp/currentForm.maxMP) * 100);
-			Master.changeStatDisplay(this, "sp", currentForm.sp, (currentForm.sp/currentForm.maxSP) * 100);
-			displayed.put("sp", (currentForm.sp/currentForm.maxSP) * 100);
+			updateStatDisplay();
 		}
 	}
 	
-	
- 	public void react(Character attacker, Skill skill)
+	//TODO: Everything.	
+	public static double calculateDamage(Character attacker, Character defender, Skill attack, double damage)
 	{
- 		if(skill.baseCost > 0)
+		TextManager.appendText(("Calculating damage."), TextStyle.DEBUG);
+		return damage;
+	}
+	
+	/**
+	 * Returns the floating point result of the attacking type's damage multiplier against the defending character's type(s). Damage values are multiplied by this number to implement type effectiveness.  
+	 * 
+	 * @param type {@link Type} of damage
+	 * @param defender {@link Character} who is the target of the attack
+	 * @return type-based damage multiplier
+	 */
+	public static double calculateTypeMod(Type type, Character defender)
+	{
+		TextManager.appendText(("Calculating type multiplier."), TextStyle.DEBUG);
+		double mod = 1;
+		for(int j = 0; j < defender.currentForm.type.size(); j++)
+		{
+			if(mod > 0)
+			{
+				mod *= Type.determineEffectiveness(type, defender.currentForm.type.get(j));
+			}
+			else
+			{
+				mod = 0;
+				break;
+			}
+		}
+		return mod;
+	}
+
+	public void react(Character attacker, Skill skill)
+	{
+		if(skill.baseCost > 0)
  		{
- 			//Might be skills that cost HP, or some combination of resources.
+ 			//There may be skills that cost HP, or some combination of resources.
  			if(!skill.getFlags().contains(SkillFlags.SPELL))
  				attacker.damageStat("sp", skill.baseCost, true);
  			if(skill.getFlags().contains(SkillFlags.SPELL))
@@ -680,8 +721,16 @@ public class Character
 			//TODO: Skill conflicts
 			return;
 		}
+		if(skill.flags.contains(SkillFlags.COUNTER))
+		{	
+			TextManager.appendText(((Counter) skill).preparation(this), TextStyle.REGULAR);
+			addCounterState(new CounterState(skill.name, skill, ((Counter) skill).counterable(), (int) skill.getSkillModifier()));
+			Master.addAction(Master.getCombatInstance(getCombatInstance()).getInstance(), new TurnData(attacker, targets, skill));
+			return;
+		}
 		if(skill.flags.contains(SkillFlags.BUFF))
 		{
+			//Possibly look out for "buffs" that can hinder the recipient while also bypassing any preventative measures due to being buffs.
 			//just accept positive effects like healing
 			((Buff) skill).applyEffect(this);
 			Master.addAction(Master.getCombatInstance(getCombatInstance()).getInstance(), new TurnData(attacker, targets, skill));
@@ -698,6 +747,10 @@ public class Character
 		if(!skill.flags.contains(SkillFlags.UNCOUNTERABLE))
 		{
 			//determine whether or not the attack is countered
+			if(counter(skill, attacker))
+			{
+				return;
+			}
 		}
 		//TODO: Needs updating for multihits.
 		if(!skill.flags.contains(SkillFlags.UNAVOIDABLE))
@@ -712,67 +765,54 @@ public class Character
 		{
 			TextManager.appendText(("\n" + name + " was hit by " + attacker.name + " with " + skill.pName + ".\n"), TextStyle.REGULAR);
 			
-			//modify damage from the attack using the user's stats
-			TextManager.appendText(("Calculating damage."), TextStyle.DEBUG);
-			//TODO: Text processing for damage.
+			final DamageArray trueDamage = ((Attack) skill).baseDamage(this); 
 			
-			
-			//modify damage based on type
-			final DamageArray trueDamage = ((model.Skills.Attack) skill).baseDamage(this); 
-			
-			@SuppressWarnings("unused")
 			boolean immune = false;
 			
 			for(int multi = 0; multi < skill.multiplier; multi++)
 			{
+				immune = false;
 				DamageArray damage = new DamageArray(trueDamage);
 				
 				for(Map.Entry<Damage, Double> i : damage.getDamage().entrySet())
 				{
 					if(i.getValue() > 0)
 					{
-						double mod = 1;
-						for(int j = 0; j < currentForm.type.size(); j++)
+						//modify damage from the attack based on the offensive stats of the attacker against the defensive stats of the defender
+						damage.addDamage(i.getKey(), calculateDamage(attacker, this, skill, i.getValue()));
+						//TODO: Handle damage dealt being reduced to nothing.
+						
+						//modify damage based on typing
+						double mod = calculateTypeMod(i.getKey().type, this);
+						if(mod == 0)
 						{
-							if(mod > 0)
-							{
-								mod *= Type.determineEffectiveness(i.getKey().type, this.currentForm.type.get(j));
-								if(mod <= 0)
-								{
-									immune = true;
-								}
-							}
-							else
-							{
-								immune = true;
-							}
+							immune = true;
+						}						
+						
+						if(!immune)
+						{
+							//This line will only be run if the target is not immune so that less refactoring would be required in the event that there is a way to hit immune targets anyway
+							TextManager.appendText("Damage value = " + (damage.addDamage(i.getKey(), i.getValue() * mod)), TextStyle.DEBUG);
+							
+							double debug = currentForm.hp;
+							double dmg = i.getValue();						
+							//TODO: Show damage type here.
+							TextManager.appendText((" (" + dmg + ")"), TextStyle.DAMAGE);
+							currentForm.hp -= dmg;
+							totalDamage += dmg;
+							TextManager.appendText((name + " HP reduced from " + debug + " to " + currentForm.hp + "."), TextStyle.DEBUG);
 						}
-						TextManager.appendText("Damage value = " + (damage.addDamage(i.getKey(), i.getValue() * mod)), TextStyle.DEBUG);
+						else
+						{
+							TextManager.appendText((" (IMMUNE)"), TextStyle.REGULAR);	
+						}
+						if(currentForm.hp <= 0)
+						{
+							break;
+						}
 					}
 				}
-				
-				LinkedHashMap<Damage, Double> finalDamage = new LinkedHashMap<Damage, Double>();
-				finalDamage.putAll(damage.getDamage()); 
-				for(int i = 0; i < finalDamage.size(); i++)
-				{
-					double debug = currentForm.hp;
-					double dmg =finalDamage.get(finalDamage.keySet().toArray()[i]);
-					if(dmg > 0)
-					{
-						TextManager.appendText((" (" + dmg + ")"), TextStyle.DAMAGE);
-						currentForm.hp -= dmg;
-						totalDamage += dmg;
-						TextManager.appendText((name + " HP reduced from " + debug + " to " + currentForm.hp + "."), TextStyle.DEBUG);
-					}
-					else
-					{
-						TextManager.appendText((" (IMMUNE)"), TextStyle.REGULAR);	
-					}
-					if(currentForm.hp <= 0)
-					{
-						break;
-					}
-				}
+			
 				if(currentForm.hp <= 0)
 				{
 					setFightingStatus(-1, 0, -1, -1, -1);
@@ -787,6 +827,26 @@ public class Character
 		skill.executeOnTarget(this);
 		statValidator();
 		Master.addAction(Master.getCombatInstance(getCombatInstance()).getInstance(), new TurnData(attacker, targets, skill, totalDamage));
+	}
+	public boolean counter(Skill skill, Character attacker)
+	{
+		boolean countered = false;
+		for(int i = 0; i < currentForm.counterState.size(); i++)
+		{
+			if(currentForm.counterState.get(i).counterable.apply(skill))
+			{
+				TurnData data = new TurnData(attacker, new ArrayList<Character>(List.of(this)), skill);
+				data.counter = true;
+				Master.addAction(Master.getCombatInstance(getCombatInstance()).getInstance(), data);
+				//TODO: Skill counter text
+				TextManager.appendText(("\n" + attacker.name + " used " + skill.pName + ".\n"), TextStyle.REGULAR);
+				TextManager.appendText(("\n" + name + " countered it with " + currentForm.counterState.get(i).skill.pName + ".\n"), TextStyle.REGULAR);
+				((Counter) currentForm.counterState.get(i).skill).counter(this, attacker, skill);
+				countered = true;
+				break;
+			}
+		}
+		return countered;
 	}
 	
 	
@@ -814,6 +874,11 @@ public class Character
 	{
 		return currentForm.effects;
 	}
+	/**
+	 * Adds the specified {@link Effect} and all {@link StatusEffect} instances associated with it to the {@link Form} currently in use. Effects are added only through the use of this method.
+	 * 
+	 * @param effect the effect to be added
+	 */
 	public void addEffect(Effect effect)
 	{
 		if (!currentForm.effects.contains(effect))
@@ -846,6 +911,11 @@ public class Character
 		}
 		statValidator();
 	}
+	/**
+	 * Removes the specified {@link Effect} and all {@link StatusEffect} instances associated with it to the {@link Form} currently in use. Effects are to be removed only thorugh the use of this method.
+	 * 
+	 * @param effect the effect to be removed
+	 */
 	public void removeEffect(Effect effect)
 	{
 		effect.statusEffects.forEach(e -> currentForm.statusEffects.remove(e));
@@ -858,7 +928,7 @@ public class Character
 			else
 			{
 				//This should not happen.
-				assert(false);
+				TextManager.appendText(("Attempted to remove multipliers that were unassigned to begin with."), TextStyle.ERROR);
 				currentForm.multipliers.put(e.getKey(), 0.0);
 			}
 		});
@@ -870,9 +940,24 @@ public class Character
 		currentForm.effects.remove(effect);
 		statValidator();
 	}
+	public void addCounterState(CounterState counterState)
+	{
+		currentForm.counterState.add(counterState);
+	}
+	public void removeCounterState(CounterState counterState)
+	{
+		currentForm.counterState.remove(counterState);
+	}
+	/**
+	 * Reduces the <code>remainingTime</code> attribute for all {@link Effect} instances and {@link CombatState} instances active on the {@link Form} currently in use. Should the <code>remainingTime</code> meet or subceed 0, the effect or combat state in question will be removed. 
+	 */
 	public void decrementEffects()
 	{
 		currentForm.effects.forEach(e ->
+		{
+			e.remainingTime--;
+		});
+		currentForm.counterState.forEach(e ->
 		{
 			e.remainingTime--;
 		});
@@ -886,6 +971,7 @@ public class Character
 				removeEffect(e);
 			}
 		}
+		currentForm.counterState.removeAll(currentForm.counterState.stream().filter(e -> e.remainingTime <= 0).collect(Collectors.toList()));
 	}
 	/**
 	 * Returns an unmodifiable copy of the status effects for this {@link Character}.
@@ -1091,6 +1177,23 @@ public class Character
 	public void setQueuedSkill(Skill skill)
 	{
 		queuedSkill = skill;
+	}
+	/**
+	 * Determines whether or not this character can use a particular skill. Returns false if this character lacks the resources required to use the skill or is otherwise unable to use it.
+	 * <p>Spells cost {@link Form#mp MP}, while all other skills cost {@link Form#sp SP}. 
+	 * 
+	 * @param skill the skill to be checked
+	 * @return <code>true</code> if this character can use the skill at the time of checking
+	 */
+	public boolean canUse(Skill skill)
+	{
+		//TODO: This may require amending if/when the cost of skills can be modified by perks depending on the implementation.
+		if((!skill.getFlags().contains(SkillFlags.SPELL) && !(getStat("sp").doubleValue() >= skill.baseCost)) || (skill.getFlags().contains(SkillFlags.SPELL) && !(getStat("mp").doubleValue() >= skill.baseCost)))
+		{
+			return false;
+		}
+		//TODO: if(someStatusThatStopsYouFromUsingThisParticularSkill)
+		return true;
 	}
 	
 	public void setTarget(Character character)

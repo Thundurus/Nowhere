@@ -50,4 +50,22 @@ public class WaterDragon extends Skill implements Attack
 		damageFlags.add(DamageFlags.MAGICAL);
 		return damageFlags;
 	}
+	
+	@Override
+	public WaterDragon clone()
+	{
+		WaterDragon clone = new WaterDragon();
+		clone.name = this.name;
+		clone.pName = this.pName;
+		clone.description = this.description;
+		clone.priority = this.priority;
+		clone.multiplier = this.multiplier;
+		clone.baseCost = this.baseCost;
+		clone.accuracyModifier = this.accuracyModifier;
+		clone.skillModifier = this.skillModifier;
+		clone.baseArchetype = this.baseArchetype;
+		clone.flags.addAll(this.flags);
+		clone.type = this.type;
+		return clone;
+	}
 }

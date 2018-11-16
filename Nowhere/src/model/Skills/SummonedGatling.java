@@ -9,6 +9,7 @@ import model.DamageFlags;
 import model.Skill;
 import model.SkillArchetype;
 import model.SkillFlags;
+import model.Type;
 
 public class SummonedGatling extends Skill implements Attack
 {
@@ -40,7 +41,7 @@ public class SummonedGatling extends Skill implements Attack
 	public DamageArray baseDamage(Character user)
 	{
 		calculateSkillModifier(user);
-		return new DamageArray(new Damage(flags, damageFlags(), model.Type.STEEL), skillModifier * 5);
+		return new DamageArray(new Damage(flags, damageFlags(), Type.STEEL), skillModifier * 5);
 	}
 
 	@Override
@@ -49,5 +50,23 @@ public class SummonedGatling extends Skill implements Attack
 		ArrayList<DamageFlags> damageFlags = new ArrayList<DamageFlags>();
 		damageFlags.add(DamageFlags.PHYSICAL);
 		return damageFlags;
+	}
+	
+	@Override
+	public SummonedGatling clone()
+	{
+		SummonedGatling clone = new SummonedGatling();
+		clone.name = this.name;
+		clone.pName = this.pName;
+		clone.description = this.description;
+		clone.priority = this.priority;
+		clone.multiplier = this.multiplier;
+		clone.baseCost = this.baseCost;
+		clone.accuracyModifier = this.accuracyModifier;
+		clone.skillModifier = this.skillModifier;
+		clone.baseArchetype = this.baseArchetype;
+		clone.flags.addAll(this.flags);
+		clone.type = this.type;
+		return clone;
 	}
 }

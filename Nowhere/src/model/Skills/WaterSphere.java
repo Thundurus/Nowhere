@@ -3,6 +3,7 @@ package model.Skills;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import model.Character;
@@ -26,6 +27,10 @@ public class WaterSphere extends Skill
 		flags.add(SkillFlags.UNBLOCKABLE);
 		flags.add(SkillFlags.MAGICAL);
 		flags.add(SkillFlags.HYDRIC);
+		Consumer<Character> execOnTarget = (target) -> {
+			executeOnTarget(target);
+		};
+		effectOrder.put(execOnTarget, false);
 	}
 	
 	@Override
@@ -57,5 +62,22 @@ public class WaterSphere extends Skill
 			//Do nothing?
 		}
 	}
-
+	
+	@Override
+	public WaterSphere clone()
+	{
+		WaterSphere clone = new WaterSphere();
+		clone.name = this.name;
+		clone.pName = this.pName;
+		clone.description = this.description;
+		clone.priority = this.priority;
+		clone.multiplier = this.multiplier;
+		clone.baseCost = this.baseCost;
+		clone.accuracyModifier = this.accuracyModifier;
+		clone.skillModifier = this.skillModifier;
+		clone.baseArchetype = this.baseArchetype;
+		clone.flags.addAll(this.flags);
+		clone.type = this.type;
+		return clone;
+	}
 }

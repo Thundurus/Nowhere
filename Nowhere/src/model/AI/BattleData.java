@@ -7,7 +7,6 @@ import java.util.HashSet;
 import model.Character;
 import model.CharacterSnapshot;
 import model.Skill;
-import model.Skills.*;
 import util.TurnData;
 
 public class BattleData
@@ -27,13 +26,14 @@ public class BattleData
 	
 	public BattleData(BattleData battleData)
 	{
+		//This constructor is used for BattleData instances that only exist during the toString method.  
 		this.fighters.addAll(battleData.fighters);
 		this.usedSkills.addAll(battleData.usedSkills);
 		this.turns.addAll(battleData.turns);
 		this.statuses.addAll(battleData.statuses);
 	}
 	
-	//So that we are not later confused: This causes the addAction method to become focused on the next ArrayDeque<TurnData>. It is not related to the individual actions that characterize a turn. addAction, however, is. These methods have an egregious naming convention (closer to a naming ritual, really).
+	//So that we are not later confused: This method (nextTurn) causes the addAction method to become focused on the next ArrayList<TurnData>. It is not related to the individual actions that characters make during a single turn. addAction, however, is. These methods have an egregious naming convention that has been characterized as "closer to a naming ritual, really".
 	public void nextTurn()
 	{
 		turns.push(new ArrayList<TurnData>());		

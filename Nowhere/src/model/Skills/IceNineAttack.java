@@ -9,48 +9,59 @@ import model.DamageFlags;
 import model.Skill;
 import model.SkillArchetype;
 import model.SkillFlags;
+import model.Type;
 
-public class BasicAttack extends Skill implements Attack
+public class IceNineAttack extends Skill implements Attack
 {
-	public BasicAttack()
+	public Skill trigger;
+	
+	public IceNineAttack(Skill trigger)
 	{
-		name = "Attack";
-		pName = "Attack";
+		this.trigger = trigger;
+		name = "Ice Nine 2";
+		pName = "Ice Nine - Crystal Lances";
 		baseArchetype = SkillArchetype.ATTACK;
-		description = "Attack with your equipped weapon.";
-		flags.add(SkillFlags.ATTACK);
-		flags.add(SkillFlags.MELEE);		
+		multiplier = 9;
+		flags.add(SkillFlags.DISJOINTED);
+		flags.add(SkillFlags.SPELL);
+		flags.add(SkillFlags.PENETRATING);
+		flags.add(SkillFlags.UNABSORBABLE);
+		flags.add(SkillFlags.MULTIHIT);
 	}
 
 	@Override
 	public void executeOnSelf(Character user)
 	{
+		// TODO Auto-generated method stub
+		
 	}
-	
+
 	@Override
 	public void executeOnTarget(Character target)
 	{
+		// TODO Auto-generated method stub
+		
 	}
-
+	
 	@Override
 	public DamageArray baseDamage(Character user)
 	{
 		calculateSkillModifier(user);
-		return new DamageArray(new Damage(flags, damageFlags(), model.Type.NORMAL), skillModifier * 10);
+		return new DamageArray(new Damage(flags, damageFlags(), Type.ICE), skillModifier * 10);
 	}
 
 	@Override
 	public ArrayList<DamageFlags> damageFlags()
 	{
 		ArrayList<DamageFlags> damageFlags = new ArrayList<DamageFlags>();
-		damageFlags.add(DamageFlags.PHYSICAL);
+		damageFlags.add(DamageFlags.MAGICAL);
 		return damageFlags;
 	}
-	
+
 	@Override
-	public BasicAttack clone()
+	public IceNineAttack clone()
 	{
-		BasicAttack clone = new BasicAttack();
+		IceNineAttack clone = new IceNineAttack(trigger);
 		clone.name = this.name;
 		clone.pName = this.pName;
 		clone.description = this.description;
@@ -62,6 +73,8 @@ public class BasicAttack extends Skill implements Attack
 		clone.baseArchetype = this.baseArchetype;
 		clone.flags.addAll(this.flags);
 		clone.type = this.type;
+		clone.trigger = this.trigger;
 		return clone;
 	}
+
 }

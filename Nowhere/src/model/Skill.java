@@ -1,6 +1,9 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.function.Consumer;
+
 import model.SkillFlags;
 
 public abstract class Skill
@@ -10,6 +13,15 @@ public abstract class Skill
 	pName,
 	description;
 	
+	/**
+	 * This hashmap is used to determine when each effect is activated, and uses the following structure:
+	 * <p><code>[First__Effect][isBeforeProcess]</code>
+	 * <p><code>[Second_Effect][isBeforeProcess]</code>
+	 * <p>where the effects are the executeOnSelf and executeOnTarget methods (ordered as desired) and the boolean is whether or not the effect triggers before the other effects of the skill are processed.
+	 * <p>Either of these can be left out (but not null) when the relevant method does not do anything.
+	 */
+	public LinkedHashMap<Consumer<Character>, Boolean> effectOrder = new LinkedHashMap<Consumer<Character>, Boolean>();
+	
 	public int priority = 0, multiplier = 1;
 	
 	public double baseCost = 0, accuracyModifier = 1.0, skillModifier = 1.0;
@@ -18,6 +30,7 @@ public abstract class Skill
 	
 	public ArrayList<SkillFlags> flags = new ArrayList<SkillFlags>();
 	
+	//Not sure if this is really relevant.
 	public Type type = Type.NORMAL;
 	
 	//Might just leave this stuff public instead..
@@ -117,17 +130,19 @@ public abstract class Skill
 		return false;
 	}
 	
-	/*
-	 * Returns the string representation of the target types it supports.
+	/**
+	 * Returns the string representation of the target types supported by this {@link Skill}..
 	 * Possible targets include:
-	 * "none" (the target is area in the fight, generally used by terrain-altering skills
-	 * "one" (any one target)
-	 * "self" (only the user)
-	 * "not self" (any one target besides the user)
-	 * "enemies" (all fighters whose fightingStats[4] != user.fightingStats[4])
-	 * "allies" (all fighters whose fightingStats[4] == user.fightingStats[4])
-	 * "else" (all active fighters other than the user)
-	 * "all" (all active fighters in the combat instance)
+	 * <p>"none" (the target is area in the fight, generally used by terrain-altering skills
+	 * <p>"one" (any one target)
+	 * <p>"self" (only the user)
+	 * <p>"not self" (any one target besides the user)
+	 * <p>"enemies" (all fighters whose {@link Character#fightingStats fightingStats}[4] != user.fightingStats[4])
+	 * <p>"allies" (all fighters whose {@link Character#fightingStats fightingStats}[4] == user.fightingStats[4])
+	 * <p>"else" (all active fighters other than the user)
+	 * <p>"all" (all active fighters in the combat instance)
+	 * 
+	 * @return
 	 */
 	public String getPossibleTargets()
 	{
@@ -148,6 +163,8 @@ public abstract class Skill
 	//Any special effects that the skill will inflict on its user or target(s).
 	public abstract void executeOnSelf(Character user);
 	public abstract void executeOnTarget(Character target);
+	public abstract Skill clone();
+	
 	
 	@Override
 	public boolean equals(Object obj)

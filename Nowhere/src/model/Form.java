@@ -5,8 +5,6 @@ import java.util.HashMap;
 
 import model.Skills.BasicAttack;
 import model.Skills.Wait;
-import view.TextManager;
-import view.TextStyle;
 
 public class Form
 {
@@ -16,6 +14,7 @@ public class Form
 	protected ArrayList<Skill> skills = new ArrayList<Skill>();
 	protected ArrayList<Effect> effects = new ArrayList<Effect>();
 	protected ArrayList<StatusEffect> statusEffects = new ArrayList<StatusEffect>();
+	protected ArrayList<CounterState> counterState = new ArrayList<CounterState>();
 	/**
 	 * Multipliers add their total value to the number one before calculation.
 	 * <p>I.e. if the key "strength" is in the map with the value 0.32, then effective strength will be multiplied by 1.32. They apply multiplicatively, and may be negative.
@@ -83,6 +82,12 @@ public class Form
 			temp += character.equipped[i].staminaMod;
 		}
 		maxSP = temp;
+	}
+	
+	public String getName()
+	{
+		final String copy = new String(name);
+		return copy;
 	}
 	
 	/**
@@ -270,4 +275,6 @@ public class Form
 				throw new IllegalArgumentException("The stat \"" + stat + "\" does not exist.");
 		}
 	}
+	
+	//No custom equals/hashcode methods. A character can have two forms that are the same in every way.
 }

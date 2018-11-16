@@ -2,6 +2,7 @@ package model;
 
 public enum Type
 {
+	//TODO: Designate damage colors for each type to display associated text in (e.g. icy blue color for ice damage).
 	//Blatant robbery of they-who-shall-not-be-named's types, with improvements.
 	ACID,		//
 	AIR,		//
@@ -203,6 +204,7 @@ public enum Type
 		}
 	}
 	
+	//This may not be especially useful since the type of a skill is not necessarily related to the type(s) of damage it deals.
 	public static double calculateEffectiveness(Skill skill, Character target)
 	{
 		double effectiveness = 1.0;

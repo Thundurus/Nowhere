@@ -7,6 +7,7 @@ public class CharacterSnapshot
 	public String name;
 	//TODO: Fix magic number for the skill array size.
 	public Skill[] skills = new Skill[8];
+	public Skill queuedSkill;
 	public ArrayList<Effect> effects = new ArrayList<Effect>();
 	public ArrayList<StatusEffect> statusEffects = new ArrayList<StatusEffect>();
 	public ArrayList<Type> type = new ArrayList<Type>();
@@ -20,6 +21,7 @@ public class CharacterSnapshot
 	{
 		this.id = character.id;
 		this.name = new String(character.getName());
+		this.queuedSkill = character.getQueuedSkill();
 		this.effects = character.getEffects();
 		this.statusEffects = character.getStatusEffects();
 		

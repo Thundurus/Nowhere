@@ -9,6 +9,7 @@ import model.DamageFlags;
 import model.Skill;
 import model.SkillArchetype;
 import model.SkillFlags;
+import model.Type;
 
 public class AvidiaHolyWater extends Skill implements Attack, Beam
 {
@@ -18,6 +19,7 @@ public class AvidiaHolyWater extends Skill implements Attack, Beam
 		pName = "Ultimate Demon Technique - Final Skill: Avidia Holy Water";
 		baseArchetype = SkillArchetype.ATTACK;
 		baseCost = 60;
+		type = Type.AURA;
 		flags.add(SkillFlags.ATTACK);
 		flags.add(SkillFlags.CHI);
 		flags.add(SkillFlags.ADVANCING);
@@ -66,5 +68,23 @@ public class AvidiaHolyWater extends Skill implements Attack, Beam
 		ArrayList<DamageFlags> damageFlags = new ArrayList<DamageFlags>();
 		damageFlags.add(DamageFlags.AURA);
 		return damageFlags;
+	}
+	
+	@Override
+	public AvidiaHolyWater clone()
+	{
+		AvidiaHolyWater clone = new AvidiaHolyWater();
+		clone.name = this.name;
+		clone.pName = this.pName;
+		clone.description = this.description;
+		clone.priority = this.priority;
+		clone.multiplier = this.multiplier;
+		clone.baseCost = this.baseCost;
+		clone.accuracyModifier = this.accuracyModifier;
+		clone.skillModifier = this.skillModifier;
+		clone.baseArchetype = this.baseArchetype;
+		clone.flags.addAll(this.flags);
+		clone.type = this.type;
+		return clone;
 	}
 }

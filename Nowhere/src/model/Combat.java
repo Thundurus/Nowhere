@@ -18,7 +18,7 @@ public class Combat
 {
 	private int id;
 	private boolean isActive;
-	public static final int MAX_SIZE = 6; //We'll figure out this number later
+	public static final int MAX_SIZE = 6; //We'll figure out this number later.
 	private ArrayList<Character> players = new ArrayList<Character>();
 	private ArrayDeque<Character> intruders = new ArrayDeque<Character>();
 	private HashMap<Character, ArrayList<Object>> actions = new HashMap<>();
@@ -72,11 +72,12 @@ public class Combat
 	}
 	
 	/**
-	 * Adds a group of characters to this {@link Combat} instance while setting their states to reflect this. This method does <strong>not</strong> initialize the {@link BattleData} instance or clear existing characters from this {@link Combat} instance. 
+	 * Adds a group of characters to this {@link Combat} instance while setting their states to reflect this, and sets this combat instance as active.
+	 * <p>This method does <strong>not</strong> initialize the {@link BattleData} instance or clear existing characters from this combat instance. 
 	 * 
 	 * @param fighters {@link Character}s to insert
 	 * @param sides the alignment of <tt>fighters</tt>. Elements in the array must correspond to the {@link Character} in <tt>fighters</tt> with the same index. 
-	 * @see #clear() clear
+	 * @see #clear()
 	 * @see #setInstance(String) setInstance
 	 */
 	public void startCombat(Character[] fighters, int[] sides)
@@ -185,11 +186,12 @@ public class Combat
 	 * @param fighter	{@link Character} to perform the action
 	 * @param skill		{@link Skill} to be used on the targets
 	 * @param targets	Contains either the Character(s) that are targeted by the action, or a simplified String (e.g. "self", "enemies", "all").
+	 * @see Skill#getPossibleTargets()
 	 */
 	public void chooseAction(Character fighter, Skill skill, ArrayList<Object> targets)
 	{
 		//Not sure if we should hijack their choice here, or restrict their options just before they act.
-		//The latter approach allows for players that become recapacitated before their turn to use their turn, and will be the preferred approach as of now.
+		//The latter approach allows for players that somehow become recapacitated before their turn to use their turn, and will be the preferred approach as of now.
 //		if(fighter.is(new Incapacitated()))
 //		{
 //			ArrayList<Object> combined = new ArrayList<Object>(List.of(new Nothing(), "self"));
@@ -255,8 +257,10 @@ public class Combat
 		//TODO: Determine and handle move interactions.
 		while(!order.isEmpty())
 		{
+			Character actor = order.get(0);
+			Skill skill = (Skill) actions.get(actor).get(0);
 			//Check again for anyone who has become incapacitated during this turn.
-			if(order.get(0).isIncapacitated())
+			if(actor.isIncapacitated())
 			{
 				//We could do this a bit differently.
 				order.remove(0);
@@ -265,21 +269,22 @@ public class Combat
 			ArrayList<Character> targets = new ArrayList<Character>();
 		
 			//The first "Character" object can actually be a String defining who the targets are.
-			if(actions.get(order.get(0)).get(1).getClass() == String.class)
+			if(actions.get(actor).get(1).getClass() == String.class)
 			{
-				if(((String) actions.get(order.get(0)).get(1)).equalsIgnoreCase("self"))
+				String target = (String) actions.get(actor).get(1);
+				if((target).equalsIgnoreCase("self"))
 				{
-					targets.add(order.get(0));
+					targets.add(actor);
 				}
-				else if(((String) actions.get(order.get(0)).get(1)).equalsIgnoreCase("enemies"))
+				else if((target).equalsIgnoreCase("enemies"))
 				{
-					targets.addAll(conscious.stream().filter(c -> c.getSide() != order.get(0).getSide()).collect(Collectors.toList()));
+					targets.addAll(conscious.stream().filter(c -> c.getSide() != actor.getSide()).collect(Collectors.toList()));
 				}
-				else if(((String) actions.get(order.get(0)).get(1)).equalsIgnoreCase("allies"))
+				else if((target).equalsIgnoreCase("allies"))
 				{
-					targets.addAll(conscious.stream().filter(c -> c.getSide() == order.get(0).getSide()).collect(Collectors.toList()));
+					targets.addAll(conscious.stream().filter(c -> c.getSide() == actor.getSide()).collect(Collectors.toList()));
 				}
-				else if(((String) actions.get(order.get(0)).get(1)).equalsIgnoreCase("all"))
+				else if((target).equalsIgnoreCase("all"))
 				{
 					targets.addAll(conscious);
 				}
@@ -288,13 +293,22 @@ public class Combat
 			//If not, just add the characters.
 			else
 			{
-				for(int i = 1; i < actions.get(order.get(0)).size(); i++)
+				for(int i = 1; i < actions.get(actor).size(); i++)
 				{
-					targets.add((Character) actions.get(order.get(0)).get(i));
+					targets.add((Character) actions.get(actor).get(i));
 				}
 			}
-			ActParser.parse(order.get(0), (Skill) actions.get(order.get(0)).get(0), targets);
-			actions.remove(order.get(0));
+			ActParser.parse(actor, skill, targets);
+			ArrayList<Character> consciousNPCs = new ArrayList<Character>(players.stream().filter(c -> c.getFightingStatus()[1] == 1 && c.isNPC()).collect(Collectors.toList()));
+			
+			if(!skill.name.equals("Change Form"))
+			{
+				consciousNPCs.forEach(n ->
+				{
+					((NPC) n).see(actor, skill);
+				});
+			}
+			actions.remove(actor);
 			order.remove(0);
 		}
 		
@@ -343,6 +357,7 @@ public class Combat
 		//Reset action map and add intruders to it.
 		for(Character fighter : players)
 		{
+			Master.addStatus(getInstance(), new CharacterSnapshot(fighter));
 			//Extremely rudimentary method for determining consciousness.
 			if(fighter.getStat("hp").doubleValue() <= 0)
 			{
@@ -352,7 +367,6 @@ public class Combat
 			{
 				chooseAction(fighter, new Wait(), new ArrayList<Object>(Arrays.asList(fighter)));
 			}
-			Master.addStatus(getInstance(), new CharacterSnapshot(fighter));
 		}
 		
 		Master.nextTurn(instance);

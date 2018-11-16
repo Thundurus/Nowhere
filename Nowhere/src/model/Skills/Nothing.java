@@ -31,4 +31,22 @@ public class Nothing extends Skill
 	public void executeOnTarget(Character target)
 	{
 	}
+	
+	@Override
+	public Nothing clone()
+	{
+		Nothing clone = new Nothing();
+		clone.name = this.name;
+		clone.pName = this.pName;
+		clone.description = this.description;
+		clone.priority = this.priority;
+		clone.multiplier = this.multiplier;
+		clone.baseCost = this.baseCost;
+		clone.accuracyModifier = this.accuracyModifier;
+		clone.skillModifier = this.skillModifier;
+		clone.baseArchetype = this.baseArchetype;
+		clone.flags.addAll(this.flags);
+		clone.type = this.type;
+		return clone;
+	}
 }

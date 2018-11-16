@@ -172,7 +172,7 @@ public class Master
 			{
 				Combat thisCombat = potential.get(0);
 				//It should already have been cleared.
-				thisCombat.clear();
+				//thisCombat.clear();
 				thisCombat.startCombat(fighters, sides);
 				thisCombat.setInstance(instance);
 			}
@@ -337,12 +337,18 @@ public class Master
 	{
 		if((character.statDisplay.getParent() != null))
 			return;
-		if(!character.equals(getPlayerCharacter()) && character.getSide() != getPlayerCharacter().getID())
-			GUIHook.showStatDisplay(character.statDisplay, (javafx.scene.layout.AnchorPane) GUIHook.scenes.get(SceneMapping.AP5));
+		if(!character.equals(getPlayerCharacter()) && character.getSide() != getPlayerCharacter().getSide())
+			GUIHook.showStatDisplay(character, (javafx.scene.layout.AnchorPane) GUIHook.scenes.get(SceneMapping.AP5));
 		else
 		{
-			GUIHook.showStatDisplay(character.statDisplay, (javafx.scene.layout.AnchorPane) GUIHook.scenes.get(SceneMapping.AP2));
+			GUIHook.showStatDisplay(character, (javafx.scene.layout.AnchorPane) GUIHook.scenes.get(SceneMapping.AP2));
 		}
+	}
+	public static void updateStatDisplay(Character character)
+	{
+		if(character.statDisplay.getParent() == null)
+			displayStats(character);
+		GUIHook.updateStatDisplay(character);
 	}
 	public static void hideStatDisplay(Character character)
 	{

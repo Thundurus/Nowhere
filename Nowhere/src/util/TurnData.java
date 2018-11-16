@@ -13,7 +13,9 @@ public class TurnData
 	public Skill action;
 	public double damage;
 	public double[] damageArray;
+	public boolean counter = false;
 	
+	//TODO: Maybe add tracking for other important stats (if CharacterSnapshots are not sufficient).
 	//Stats
 	public ArrayList<Double> targetHealth = new ArrayList<Double>();
 	
@@ -64,7 +66,11 @@ public class TurnData
 		if(targets.size() == 1)
 		{
 			result.append("target " + targets.get(0).getName());
-			if(action.getFlags().contains(SkillFlags.ATTACK))
+			if(counter)
+			{
+				result.append(", but it was countered.");
+			}
+			if(action.getFlags().contains(SkillFlags.ATTACK) && !counter)
 			{
 				if(Double.valueOf(damage) != null)
 				{

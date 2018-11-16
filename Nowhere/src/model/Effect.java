@@ -12,6 +12,13 @@ public class Effect
 	public ArrayList<StatusEffect> statusEffects = new ArrayList<StatusEffect>(); //Status Effects
 	public double remainingTime;
 	public Supplier<Void> effect;
+	public boolean persistent = false;
+	
+	public Effect(String name, double remainingTime)
+	{
+		this.name = name;
+		this.remainingTime = remainingTime;
+	}
 	
 	public Effect(String name, HashMap<String, Integer> effects, double remainingTime)
 	{

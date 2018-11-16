@@ -12,7 +12,7 @@ public enum SkillFlags
 	
 	//Delivery Methods
 	MELEE,					//Applies to attacks that are launched from a short range, including some projectile weapons and magic.
-	DISJOINTED,				//Applies to attacks where the user does not make physical contact with the target.
+	DISJOINTED,				//Applies to attacks where the user does not directly make physical contact with the target (and is not necessarily close), but there is solid matter connecting them (e.g. a spear).
 	PROJECTILE,				//Applies to any move that is or creates a projectile.
 	MISSILE, 				//Applies to projectiles from traditional ranged weapons (e.g. rocks, bullets, arrows).
 	HITSCAN,				//Applies to moves that affect their target(s) without regard to space or positioning.
@@ -70,14 +70,19 @@ public enum SkillFlags
 	KNOCKBACK,				//Applies to moves which involve the target of the move being blown away from the user.
 	ACCURATE,				//Applies to attacks that mostly ignore the accuracy of the user.
 	UNREACTABLE,			//Applies to attacks that mostly ignore the evasion of the target(s).
+	GROUNDED,				//Applies to attacks that are unable to hit opponents that can stay off of the ground.
 	
 	
 	//Skill Archetypes
 	ATTACK,					//Applies to moves which involve the user harming their target(s).
+	COUNTER,				//Applies to moves which involve the user attempting to react to actions made by their target(s). The actions taken as the result of a successful counter do not use this flag.
 	GUARD,					//Applies to moves which involve the user defending themselves or their target(s).
 	BARRIER,				//Applies to moves which involve the construction of a barrier.
 	STRUCTURE,				//Applies to moves which involve the construction of a persistent structure.
 	BUFF,					//Applies to moves that apply a beneficial effect of some kind to the user and/or the target.
 	TRANSFORM,				//Applies to moves which involve the user transforming themselves.
 	WAIT;					//Applies to actions which are characterized by their lack of action.
+	
+	
+	
 }
