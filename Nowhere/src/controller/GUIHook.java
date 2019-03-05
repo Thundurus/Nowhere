@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,6 +22,7 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -260,6 +263,22 @@ public class GUIHook implements Initializable
     @FXML
     private StackPane mg55;
 
+    public static class GUITask extends Task<Void>
+    {
+    	private Supplier<Void> function;
+    	
+    	public GUITask(Supplier<Void> function)
+    	{
+    		this.function = function;
+    	}
+
+		@Override
+		protected Void call() throws Exception
+		{
+			function.get();
+			return null;
+		}
+    }
     
     @Override
 	public void initialize(URL url, ResourceBundle rsrcs)
@@ -1046,9 +1065,9 @@ public class GUIHook implements Initializable
     
     
     //Under no circumstances should conflicting animations be allowed to play.
-    public static synchronized void changeStatDisplay(String stat, double value, double percentage, model.Character character)
+    public static void changeStatDisplay(String stat, double value, double percentage, model.Character character)
     {
-    	System.out.println("<--Change-->");
+//    	System.out.println("<--Change-->");
     	//TODO: Restrict changeStatDisplay from acting on the same GUI element concurrently while continuing to allow unrelated GUI elements to be modified simultaneously. 
 //    	if(locked)
 //    	{
@@ -1206,9 +1225,9 @@ public class GUIHook implements Initializable
 		statDisplay.put(statV1, percentage);
     }
 
-    public static synchronized void zeroStatDisplay(model.Character character)
+    public static void zeroStatDisplay(model.Character character)
     {
-    	System.out.println("<--Zero-->");
+//    	System.out.println("<--Zero-->");
     	VBox stats = character.getStatDisplay();
     	LinkedHashMap<String, Double> statDisplay = character.getDisplayed();
     	LinkedHashMap<String, javafx.scene.Node> nodes = new LinkedHashMap<String, javafx.scene.Node>();
@@ -1322,17 +1341,26 @@ public class GUIHook implements Initializable
 			}
 		});
 		
+		Supplier<Void> playAnimation = () -> 
+		{
+			locked = true;
+			animation.play();
+			return null;
+		};
 		
-		locked = true;
-		animation.play();
+		GUITask animationTask = new GUITask(playAnimation);
+		
+		ExecutorService exeggutor = Executors.newSingleThreadExecutor();
+		exeggutor.execute(animationTask);
+		exeggutor.shutdown();
 		
 		statDisplay.put("hp", (double) 0);
 		statDisplay.put("mp", (double) 0);
 		statDisplay.put("sp", (double) 0);
     }
-    public static synchronized void updateStatDisplay(model.Character character)
+    public static void updateStatDisplay(model.Character character)
     {
-    	System.out.println("<--Update-->");
+//    	System.out.println("<--Update-->");
     	VBox stats = character.getStatDisplay();
     	LinkedHashMap<String, Double> statDisplay = character.getDisplayed();
     	LinkedHashMap<String, javafx.scene.Node> nodes = new LinkedHashMap<String, javafx.scene.Node>();
@@ -1383,16 +1411,46 @@ public class GUIHook implements Initializable
 				}
 			}
 		}
-		System.out.println("Current Fill = " + ((Label) nodes.get("HPnumber")).getTextFill().toString());
+		
+		double hpPercentage = (character.getStat("hp").doubleValue()/character.getStat("maxHP").doubleValue()) * 100;
+		double mpPercentage = (character.getStat("mp").doubleValue()/character.getStat("maxMP").doubleValue()) * 100;
+		double spPercentage = (character.getStat("sp").doubleValue()/character.getStat("maxSP").doubleValue()) * 100;
+		
+		Supplier<Void> colorChange = () ->
+		{
+			if(hpPercentage > statDisplay.get("hp"))
+	  		{
+	  			((Label) nodes.get("HPnumber")).textFillProperty().set(Color.web("#25F500"));
+	  		}
+	  		else if(hpPercentage < statDisplay.get("hp"))
+	  		{
+	  			((Label) nodes.get("HPnumber")).textFillProperty().set(Color.web("#F50043"));
+	  		}
+	  		if(mpPercentage > statDisplay.get("mp"))
+	  		{
+	  			((Label) nodes.get("MPnumber")).textFillProperty().set(Color.web("#25F500"));
+	  		}
+	  		else if(mpPercentage < statDisplay.get("mp"))
+	  		{
+	  			((Label) nodes.get("MPnumber")).textFillProperty().set(Color.web("#F50043"));
+	  		}
+	  		if(spPercentage > statDisplay.get("sp"))
+	  		{
+	  			((Label) nodes.get("SPnumber")).textFillProperty().set(Color.web("#25F500"));
+	  		}
+	  		else if(spPercentage < statDisplay.get("sp"))
+	  		{
+	  			((Label) nodes.get("SPnumber")).textFillProperty().set(Color.web("#F50043"));
+	  		}
+	  		return null;
+		};
 		
 		double hpValue = character.getStat("hp").doubleValue();
-		double hpPercentage = (character.getStat("hp").doubleValue()/character.getStat("maxHP").doubleValue()) * 100;
+		
 		String statV1 = "hp";
 		
-		Paint hpCurrentFill = ((Label) nodes.get("HPnumber")).textFillProperty().get();
-		System.out.println("hpCurrentFill=" + hpCurrentFill.toString());
-		
-		javafx.scene.effect.Effect hpEffect = ((Label) nodes.get("HPnumber")).getEffect();
+//		Paint hpCurrentFill = ((Label) nodes.get("HPnumber")).textFillProperty().get();
+//		javafx.scene.effect.Effect hpEffect = ((Label) nodes.get("HPnumber")).getEffect();
 		
 		//Stat bar resizing
 		ScaleTransition hpScale = new ScaleTransition(Duration.millis(2000), nodes.get("HPbar"));
@@ -1428,12 +1486,10 @@ public class GUIHook implements Initializable
   		
   		
   		double mpValue = character.getStat("mp").doubleValue();
-		double mpPercentage = (character.getStat("mp").doubleValue()/character.getStat("maxMP").doubleValue()) * 100;
 		statV1 = "mp";
 		
-		Paint mpCurrentFill = ((Label) nodes.get("MPnumber")).textFillProperty().get();
-		
-		javafx.scene.effect.Effect mpEffect = ((Label) nodes.get("MPnumber")).getEffect();
+//		Paint mpCurrentFill = ((Label) nodes.get("MPnumber")).textFillProperty().get();
+//		javafx.scene.effect.Effect mpEffect = ((Label) nodes.get("MPnumber")).getEffect();
 		
 		//Stat bar resizing
 		ScaleTransition mpScale = new ScaleTransition(Duration.millis(2000), nodes.get("MPbar"));
@@ -1469,12 +1525,10 @@ public class GUIHook implements Initializable
   		
   		
   		double	spValue = character.getStat("sp").doubleValue();
-		double spPercentage = (character.getStat("sp").doubleValue()/character.getStat("maxSP").doubleValue()) * 100;
 		statV1 = "sp";
 		
-		Paint spCurrentFill = ((Label) nodes.get("SPnumber")).textFillProperty().get();
-		
-		javafx.scene.effect.Effect spEffect = ((Label) nodes.get("SPnumber")).getEffect();
+//		Paint spCurrentFill = ((Label) nodes.get("SPnumber")).textFillProperty().get();
+//		javafx.scene.effect.Effect spEffect = ((Label) nodes.get("SPnumber")).getEffect();
 		
 		//Stat bar resizing
 		ScaleTransition spScale = new ScaleTransition(Duration.millis(2000), nodes.get("SPbar"));
@@ -1517,17 +1571,16 @@ public class GUIHook implements Initializable
 			@Override
 			public void handle(ActionEvent event)
 			{
-				System.out.println(((Label) nodes.get("HPnumber")).getTextFill().toString());
+//				System.out.println("HP color is currently: " + ((Label) nodes.get("HPnumber")).getTextFill().toString() + ", setting it to " + hpCurrentFill.toString());
 				((Label) nodes.get("HPnumber")).setText(Double.toString(hpValue));
-				((Label) nodes.get("HPnumber")).textFillProperty().set(hpCurrentFill);
-				System.out.println(((Label) nodes.get("HPnumber")).getTextFill().toString());
-				((Label) nodes.get("HPnumber")).setEffect(hpEffect);
+				((Label) nodes.get("HPnumber")).textFillProperty().set(Color.web("#FFFFFF"));
+//				((Label) nodes.get("HPnumber")).setEffect(hpEffect);
 				((Label) nodes.get("MPnumber")).setText(Double.toString(mpValue));
-				((Label) nodes.get("MPnumber")).textFillProperty().set(mpCurrentFill);
-				((Label) nodes.get("MPnumber")).setEffect(mpEffect);
+				((Label) nodes.get("MPnumber")).textFillProperty().set(Color.web("#FFFFFF"));
+//				((Label) nodes.get("MPnumber")).setEffect(mpEffect);
 				((Label) nodes.get("SPnumber")).setText(Double.toString(spValue));
-				((Label) nodes.get("SPnumber")).textFillProperty().set(spCurrentFill);
-				((Label) nodes.get("SPnumber")).setEffect(spEffect);
+				((Label) nodes.get("SPnumber")).textFillProperty().set(Color.web("#FFFFFF"));
+//				((Label) nodes.get("SPnumber")).setEffect(spEffect);
 				locked = false;
 				while(!todo.isEmpty())
 				{
@@ -1535,41 +1588,26 @@ public class GUIHook implements Initializable
 				}
 			}
 		});
+		Supplier<Void> playAnimation = () -> 
+		{
+			locked = true;
+			animation.play();
+			return null;
+		};
 		
-
-  		if(hpPercentage > statDisplay.get("hp"))
-  		{
-  			((Label) nodes.get("HPnumber")).textFillProperty().set(Color.web("#25F500"));
-  		}
-  		else if(hpPercentage < statDisplay.get("hp"))
-  		{
-  			((Label) nodes.get("HPnumber")).textFillProperty().set(Color.web("#F50043"));
-  		}
-  		if(mpPercentage > statDisplay.get("mp"))
-  		{
-  			((Label) nodes.get("MPnumber")).textFillProperty().set(Color.web("#25F500"));
-  		}
-  		else if(mpPercentage < statDisplay.get("mp"))
-  		{
-  			((Label) nodes.get("MPnumber")).textFillProperty().set(Color.web("#F50043"));
-  		}
-  		if(spPercentage > statDisplay.get("sp"))
-  		{
-  			((Label) nodes.get("SPnumber")).textFillProperty().set(Color.web("#25F500"));
-  		}
-  		else if(spPercentage < statDisplay.get("sp"))
-  		{
-  			((Label) nodes.get("SPnumber")).textFillProperty().set(Color.web("#F50043"));
-  		}
+		GUITask colorTask = new GUITask(colorChange);
+		GUITask animationTask = new GUITask(playAnimation);
 		
-		locked = true;
-		animation.play();
+		ExecutorService exeggutor = Executors.newSingleThreadExecutor();
+		exeggutor.execute(colorTask);
+		exeggutor.execute(animationTask);
+		exeggutor.shutdown();
 		
 		statDisplay.put("hp", hpPercentage);
 		statDisplay.put("mp", mpPercentage);
 		statDisplay.put("sp", spPercentage);
     }
-    //This is intended to be a temporary measure until a more screen-resolution agnostic solution is implemented.
+    //This is a temporary measure until a more screen-resolution agnostic solution is implemented.
     public static void createStatDisplay(model.Character character, AnchorPane parent)
     {
     	VBox vbox = createStatDisplay(character);

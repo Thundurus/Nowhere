@@ -33,7 +33,7 @@ public abstract class Skill
 	//Not sure if this is really relevant.
 	public Type type = Type.NORMAL;
 	
-	//Might just leave this stuff public instead..
+	//It might make sense to leave this stuff public instead.
 	public String getName()
 	{
 		return name;
@@ -131,9 +131,9 @@ public abstract class Skill
 	}
 	
 	/**
-	 * Returns the string representation of the target types supported by this {@link Skill}..
+	 * Returns the string representation of the target types supported by this {@link Skill}.
 	 * Possible targets include:
-	 * <p>"none" (the target is area in the fight, generally used by terrain-altering skills
+	 * <p>"none" (the target is the area in which the fight happens, generally used by terrain-altering skills)
 	 * <p>"one" (any one target)
 	 * <p>"self" (only the user)
 	 * <p>"not self" (any one target besides the user)

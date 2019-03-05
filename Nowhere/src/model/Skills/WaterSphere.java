@@ -48,13 +48,14 @@ public class WaterSphere extends Skill
 	public void executeOnTarget(Character target)
 	{
 		Effect waterSphere = new Effect("Water Sphere", new HashMap<String, Integer>(), new ArrayList<StatusEffect>(List.of(new model.StatusEffects.Incapacitated())), 3);
-		Supplier<Void> effect = () -> {
-			System.out.println(target.getName());
-			return null;
-		};
-		waterSphere.setEffect(effect);
 		if(!target.getEffects().contains(waterSphere))
 		{
+			Supplier<Void> effect = () -> 
+			{
+				System.out.println(target.getName());
+				return null;
+			};
+			waterSphere.setEffect(effect);
 			target.addEffect(waterSphere);
 		}
 		else

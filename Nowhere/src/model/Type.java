@@ -26,6 +26,12 @@ public enum Type
 	
 	private static double immune = 0, ineffective = 0.5, normal = 1.0, supereffective = 2.0;
 			
+	/**
+	 * Returns the damage multiplier of an attacking type against a defending type.
+	 * @param type1 the attacking type
+	 * @param type2 the defending type
+	 * @return damage multiplier
+	 */
 	public static double determineEffectiveness(Type type1, Type type2)
 	{
 		switch(type1)
